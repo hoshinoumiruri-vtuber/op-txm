@@ -115,8 +115,8 @@ All simulations run analytically (Python) with ngspice batch mode for transient 
 | Parameter | Value | Status |
 |---|---|---|
 | 72V rail ripple (after LC filter) | 0.088 µV p-p | PASS |
-| LR8 junction temperature | 58.3 °C (45 °C ambient) | PASS |
-| TPS7A39 junction temperature | 48.5 °C (45 °C ambient) | PASS |
+| LR8 junction temperature | 63.0 °C (45 °C ambient) | PASS |
+| TPS7A39 junction temperature | 48.7 °C (45 °C ambient) | PASS |
 | Phantom current draw | 9.09 mA typ / 10.97 mA max | PASS typ (< 10 mA IEC 61938) |
 
 ### 4.2 JFET Buffer + DC Servo

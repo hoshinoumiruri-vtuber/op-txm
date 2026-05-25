@@ -61,17 +61,9 @@ RIN      = 10e3
 RF       = 47e3
 R_SHELF  = 47e3
 C_DEEMPH = 150e-12   # updated from 330 pF — see dual_capsule_eq.py for rationale
-GBW      = 8e6
-A_OL_DC  = 1e5
 
 F_P_ZF = 1.0 / (2 * np.pi * (RF + R_SHELF) * C_DEEMPH)
 F_Z_ZF = 1.0 / (2 * np.pi * R_SHELF * C_DEEMPH)
-
-LDR_VALUES = {
-    "10 kΩ (full compression)":  10e3,
-    "100 kΩ":                   100e3,
-    "1 MΩ (no compression)":     1e6,
-}
 
 FREQS = np.logspace(np.log10(10), np.log10(100e3), 4000)
 
@@ -178,7 +170,7 @@ V_DIODE     = 0.30
 F_OSC       = 100e3
 C_PUMP      = 100e-9
 C_OUT       = 4.7e-6
-I_LOAD_HV   = 3.28e-3    # A  HV section load (from DFM report)
+I_LOAD_HV   = 1.636e-3   # A  JFET Ids (servo-locked); only load on 72V rail
 L_LPF       = 10e-3
 C_LPF       = 10e-6
 R_DAMP      = 5.0        # Ω  series resistance of inductor (ESR estimate)
@@ -398,7 +390,7 @@ with plt.rc_context(STYLE):
 # LR8: drops 48V → 35.2V at ~3.47 mA (power/LDO section load)
 V_IN_LR8   = 48.0
 V_OUT_LR8  = 35.2
-I_LR8      = 3.47e-3
+I_LR8      = 4.7e-3    # A  35.2V rail load: TPS7A(1.0) + OPA1642(3.6) + misc(0.1) mA
 P_LR8      = (V_IN_LR8 - V_OUT_LR8) * I_LR8
 Rth_LR8    = 300.0   # °C/W  SOT-89 package (datasheet: 250–350 °C/W)
 T_AMB      = 45.0    # °C  internal microphone body temperature (non-ventilated)
@@ -406,7 +398,7 @@ Tj_LR8     = T_AMB + P_LR8 * Rth_LR8
 
 # TPS7A39: ±15V LDO, Vin=35.2V, Vout=±15V, Iq=75µA each
 # Each half dissipates: (35.2 - 15) * I_out_half
-I_OPAMP_TOTAL = 3.47e-3   # mA total ±15V load (op-amps Iq + output stage)
+I_OPAMP_TOTAL = 3.7e-3    # A  ±15V load: OPA1642 dual Iq(3.6mA) + misc(0.1mA)
 I_EACH_HALF   = I_OPAMP_TOTAL / 2
 P_TPS_POS  = (V_OUT_LR8 - 15.0) * I_EACH_HALF
 P_TPS_NEG  = (V_OUT_LR8 - 15.0) * I_EACH_HALF
