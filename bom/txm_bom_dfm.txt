@@ -1,0 +1,29 @@
+op-txm — DFM Review
+============================================================
+
+Total line items : 35
+SMD parts        : 33
+Off-board (TH)   : 1
+DNP parts        : 0
+
+DFM Checks
+------------------------------------------------------------
+  PASS  Min drill (mechanical): 0.3 mm
+  PASS  Min drill (laser via): 0.2 mm
+  PASS  Min track/space: 0.15/0.15 mm (prefer)
+  PASS  Solder mask expansion: 0.15 mm all SMD pads
+  PASS  Silkscreen clearance: 0.15 mm from pads
+  PASS  Fiducials: 3× FID at board corners
+  PASS  TPS7A39 EP thermal vias: 4× Ø0.25mm in 2×2 grid
+  PASS  HV clearance (PHANTOM/V_BOOST): 0.5 mm to all other copper
+  PASS  Through-hole after reflow: TX1 (NTE10/3) hand-soldered last
+  PASS  Capsule leads TH drill: 0.8 mm, annular ring ≥1.5 mm
+  PASS  Transformer leads TH drill: 1.0 mm, annular ring ≥2.5 mm
+  PASS  NPTH cable-tie slots: 2.5 mm NPTH for NTE10/3 retention
+
+Off-board / hand-soldered parts:
+  TX1        NTE10/3               1:3 tap used for mic output. 1:10 tap leads soldered to dummy TH pads (mechanical anchor). Hand-solder all 6 leads after PCBA reflow. Secure body with cable tie through PCB NPTH slots.
+
+Long-lead parts to order first:
+  IXYS LR8K4-G      (8–16 week lead time)
+  Neutrik NTE10/3   (check Farnell / Mouser stock)

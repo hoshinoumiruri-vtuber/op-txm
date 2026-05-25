@@ -1,0 +1,36 @@
+Ref,Value,Description,Package,Manufacturer,MPN,Qty,DNP,Notes
+U_LR8,LR8K4-G,HV LDO pre-regulator 48V→35.2V,SOT-89,IXYS,LR8K4-G,1,,"Long lead — order early. R_ADJ1=6k8, R_ADJ2=240R set Vout=35.2V"
+U_REG,TPS7A3901DSKR,"Dual LDO +/-15V, WSON-12",WSON-12,Texas Instruments,TPS7A3901DSKR,1,,
+D_CP1,BAT54S,Schottky diode SOD-323 (charge pump),SOD-323,Vishay,BAT54S-E3-08,1,,
+D_CP2,BAT54S,Schottky diode SOD-323 (charge pump),SOD-323,Vishay,BAT54S-E3-08,1,,
+L1,10mH / 50mA,"Inductor, LC post-filter (V_BOOST ripple)",0805,Murata,LQH2MCN100K02L,1,,Choose low-DCR ≤ 8Ω type
+C_BOOST1,10uF / 100V,Charge pump capacitor,1210,TDK,C3225X5R2A106M250AA,1,,
+C_BOOST2,10uF / 100V,Charge pump capacitor,1210,TDK,C3225X5R2A106M250AA,1,,
+C_BOOST_OUT,10uF / 100V,V_BOOST output filter cap,1210,TDK,C3225X5R2A106M250AA,1,,
+R_ADJ1,6k8 / 0.1%,LR8 Vadj divider high,0805,Vishay,CRCW08056K80FKEA,1,,200V rated 0805
+R_ADJ2,240R / 0.1%,LR8 Vadj divider low,0805,Vishay,CRCW0805240RFKEA,1,,200V rated 0805
+C_LR8_IN,100n / 100V,LR8 input bypass,0805,Murata,GRM21BR72A104KA35L,1,,
+C_LR8_OUT,4u7 / 50V,LR8 output bypass,0805,TDK,C2012X5R1H475K085AC,1,,
+Q1,MMBF170LT1G,"N-JFET SOT-23, Idss 2–6mA",SOT-23,onsemi,MMBF170LT1G,1,,
+R_D,22k / 1%,JFET drain resistor,0402,Yageo,RC0402FR-0722KL,1,,
+R_GBIAS,1G / 1%,JFET gate bias resistor,0805,Vishay,CRCW08051G00FKEA,1,,200V rated 0805 required for VGATE net
+C_COUP,1uF / 50V,Input coupling cap,0805,TDK,C2012X5R1H105K085AC,1,,
+U1,OPA1642AIDR,"Dual JFET-input op-amp, SOIC-8, EIN=5.1nV/√Hz",SOIC-8,Texas Instruments,OPA1642AIDR,1,,"GBW=11MHz, EIN=5.1nV/√Hz. Drives DC servo (section A) and EQ buffer (section B). Better noise than OPA2134."
+R_INT,300k / 1%,Servo integrator resistor,0402,Yageo,RC0402FR-07300KL,1,,
+C_INT,10uF / 16V,Servo integrator cap,0805,TDK,C2012X5R1C106K085AC,1,,
+R_FLT,10M / 1%,Servo gate injection resistor,0805,Vishay,CRCW080510M0FKEA,1,,
+C_FB_SRV,100n / 50V,Servo feedback cap,0402,Murata,GRM155R71H104KA88D,1,,
+R_VREF1,82k / 1%,Vref divider high,0402,Yageo,RC0402FR-0782KL,1,,
+R_VREF2,1k5 / 1%,Vref divider low,0402,Yageo,RC0402FR-071K5L,1,,
+R_SHELF,47k / 1%,EQ shelf resistor,0402,Yageo,RC0402FR-0747KL,1,,
+C_DEEMPH,150pF / 50V,EQ de-emphasis cap,0402,Murata,GRM1555C1H151JA01D,1,,
+SJ1,Solder bridge,"K47/K87 mode select (open=K47, closed=K87)",SolderJumper,,,1,,Leave open for K47 flat response; close for K87 de-emphasis
+C_P15V_1,10uF / 25V,P15V bulk decoupling,0805,TDK,C2012X5R1E106K085AC,1,,
+C_P15V_2,100n / 25V,P15V HF bypass,0402,Murata,GRM155R71E104KA88D,1,,
+C_N15V_1,10uF / 25V,N15V bulk decoupling,0805,TDK,C2012X5R1E106K085AC,1,,
+C_N15V_2,100n / 25V,N15V HF bypass,0402,Murata,GRM155R71E104KA88D,1,,
+TX1,NTE10/3,"Audio transformer 1:3:10, 200Ω primary, free wires",Off-board TH,Neutrik,NTE10/3,1,,1:3 tap used for mic output. 1:10 tap leads soldered to dummy TH pads (mechanical anchor). Hand-solder all 6 leads after PCBA reflow. Secure body with cable tie through PCB NPTH slots.
+R_PH2,33k / 1%,Phantom bypass pin2,0402,Yageo,RC0402FR-0733KL,1,,
+R_PH3,33k / 1%,Phantom bypass pin3,0402,Yageo,RC0402FR-0733KL,1,,
+C_PH2,470nF / 100V,Phantom bypass cap pin2,0805,TDK,C2012X7R2A474K125AC,1,,
+C_PH3,470nF / 100V,Phantom bypass cap pin3,0805,TDK,C2012X7R2A474K125AC,1,,

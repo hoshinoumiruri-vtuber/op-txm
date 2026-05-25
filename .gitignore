@@ -1,0 +1,36 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# uv
+uv.lock
+
+# ngspice intermediates
+sim/*.log
+sim/*.cir
+
+# Simulation plot intermediates (keep assets/sim_results/ PNGs)
+sim/boost_filter_response.png
+sim/boost_transient.png
+sim/dc_servo.png
+sim/dual_capsule_eq.png
+sim/jfet_nfb_response.png
+sim/optocoupler.png
+sim/signal_chain.png
+
+# KiCad
+*.kicad_pcb-bak
+*.kicad_sch-bak
+*-backups/
+fp-info-cache
+*.000
+*.bak
+
+# OS
+.DS_Store
+Thumbs.db
