@@ -30,14 +30,14 @@
 
 ## NTE10/3 transformer lead pads
 
-The NTE10/3 has **6 free-wire leads** (2 primary + 2 for the 1:3 secondary + 2 for the 1:10 secondary).
-All 6 leads get through-hole pads on the PCB, even though only 4 are electrically active.
+The NTE10/3 has **5 free-wire leads** in the 1:3 configuration (2 primary + 2 for 1:3 secondary tap + 1 centre tap).
+All leads get through-hole pads. Connection is **reversed 3:1** — op-amp drives the 3× secondary, XLR from 1× primary.
 
 | Pad label | Drill | Function |
 |---|---|---|
-| TX_P1, TX_P2 | 1.0 mm | Primary (driven by op-amp EQ output) |
-| TX_S3_HOT, TX_S3_RTN | 1.0 mm | 1:3 secondary — connected to XLR pin 2 and pin 3 |
-| TX_S10_A, TX_S10_B | 1.0 mm | 1:10 secondary — **dummy pads**, leave unconnected or short |
+| TX_S3_HOT, TX_S3_RTN | 1.0 mm | 3× secondary — **driven by op-amp EQ output** (Blue / White leads) |
+| TX_S3_CT | 1.0 mm | 3× secondary centre tap → signal GND (Yellow lead, tie to GND) |
+| TX_P1, TX_P2 | 1.0 mm | 1× primary — **XLR pin 2 (hot) and XLR pin 3 (cold)** (Red / Black leads) |
 
 The 1:10 secondary dummy pads serve two purposes:
 1. Mechanical anchor — the leads are still soldered for strain relief

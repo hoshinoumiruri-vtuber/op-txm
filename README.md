@@ -156,8 +156,8 @@ K47/K87 modes, JFET → OPA1642 EQ → NTE10/3 → 600 Ω balanced load.
 | Bandwidth HF −3 dB (K47) | > 100 kHz | Well above audio band |
 | Phase @ 1 kHz (K47) | +0.5° | — |
 | Transformer connection | Reversed 3:1 (−9.5 dB) | Op-amp drives 3× winding; Zout ≈ 255 Ω at XLR |
-| Transformer LF −3 dB | ~0.08 Hz | Estimated (Ldriven=720 H, 3× winding) |
-| Transformer HF −3 dB | ~390 kHz analytical | Estimated (Lleak TBD at bench); reversed 3:1 extends HF vs forward |
+| Transformer LF −3 dB | ~0.30 Hz | Estimated (Ldriven=720 H, DCR_sec=1.25 kΩ) |
+| Transformer HF −3 dB | ~415 kHz analytical | Estimated (Lleak TBD at bench); reversed 3:1 extends HF vs forward |
 
 > Transformer DCR and leakage inductance are estimated. Update `sim/tx_output.py` and `sim/signal_chain.py` after bench measurement.
 
@@ -230,8 +230,8 @@ python sim/generate_plots.py
 - [x] Phantom power budget (phantom_budget.py) — 9.09 mA typ PASS (< 10 mA IEC 61938)
 - [x] JFET buffer + DC servo simulation (dc_servo.py)
 - [x] K47/K87 EQ simulation (dual_capsule_eq.py)
-- [x] Transformer output stage analytical model (tx_output.py) — LF=0.08 Hz, HF=390 kHz
-- [x] Full signal-chain AC sweep (signal_chain.py) — 17.2 dB diff gain, K87 shelf −5.9 dB @ 100 kHz PASS
+- [x] Transformer output stage analytical model (tx_output.py) — LF=0.30 Hz, HF=415 kHz
+- [x] Full signal-chain AC sweep (signal_chain.py) — 16.0 dB diff gain, K87 shelf −5.9 dB @ 100 kHz PASS
 - [ ] Measure NTE10/3 DCR and leakage inductance (bench LCR meter)
 - [ ] Update tx_output.py and signal_chain.py with measured values
 

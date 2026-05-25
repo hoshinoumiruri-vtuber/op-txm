@@ -161,15 +161,14 @@ shelf_db = 20 * np.log10(Av_total_k87_hf) - 20 * np.log10(Av_total_k47)
 print(f"\nK87 shelf (>22 kHz): {shelf_db:.1f} dB  (target −6 dB)")
 
 # Reversed 3:1: driven winding is 3× (L_SEC), output winding is 1× (L_PRI)
-# LF corner: driven by L_SEC (720H) with DCR_SEC in series, 600Ω load reflected
+# LF corner: (DCR_SEC + R_load_reflected) / (2π × L_SEC)
 R_load_refl = R_load_diff / N_TURNS**2   # 1200/9 = 133Ω reflected to driven (3×) winding
 lf_corner = (DCR_SEC + R_load_refl) / (2 * np.pi * L_SEC)
-# HF corner: leakage referred to driven (3×) winding = L_LEAK × N² (if L_LEAK given at 1× side)
-L_LEAK_SEC = L_LEAK * N_TURNS**2
-hf_corner = R_load_diff / (2 * np.pi * L_LEAK_SEC)
+# HF corner: (R_load + DCR_PRI) / (2π × L_LEAK_out)  — leakage referred to 1× output winding
+hf_corner = (R_load_diff + DCR_PRI) / (2 * np.pi * L_LEAK)
 print(f"\nTransformer bandwidth (estimated, reversed 3:1):")
 print(f"  LF −3 dB : {lf_corner:.2f} Hz  (Ldriven={L_SEC:.0f} H, driven winding = 3×)")
-print(f"  HF −3 dB : {hf_corner/1e3:.1f} kHz  (Lleak_sec={L_LEAK_SEC*1e3:.1f} mH, referred to 3× winding)")
+print(f"  HF −3 dB : {hf_corner/1e3:.1f} kHz  (Lleak={L_LEAK*1e3:.2f} mH referred to 1× output winding)")
 print(f"  NOTE: Both depend on estimated/measured transformer parameters.")
 print()
 
