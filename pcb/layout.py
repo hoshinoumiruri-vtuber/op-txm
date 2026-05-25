@@ -255,17 +255,20 @@ def npth_slot(ref, x, y, drill=2.5):
 
 
 def sot23(ref, value, p1_net, p2_net, p3_net, x, y):
-    """SOT-23 (3-pin): pin1=left, pin2=right, pin3=top."""
+    """SOT-23-3: pin1=left-bottom, pin2=right-bottom, pin3=top.
+    MMBF170LT1G: pin1=Gate, pin2=Source, pin3=Drain.
+    Pad dimensions match KiCad standard SOT-23 footprint (1.0×1.4 mm at ±1.30 mm).
+    """
     return _fp(ref, value, x, y,
         graphics=[
-            _crtyd(-1.6, -1.4, 1.6, 1.4),
-            _fab_rect(-0.65, -0.7, 0.65, 0.7),
-            _ref(ref, dx=-1.8, dy=0),
+            _crtyd(-1.5, -1.9, 1.5, 2.0),
+            _fab_rect(-0.65, -0.9, 0.65, 0.55),
+            _ref(ref, dx=0, dy=-2.8),
         ],
         pads=[
-            _smd(1, -0.95,  0.9, 0.6, 0.9, p1_net),  # pin 1 — source (MMBF170: S)
-            _smd(2,  0.95,  0.9, 0.6, 0.9, p2_net),  # pin 2 — gate (MMBF170: G)
-            _smd(3,  0.0,  -0.9, 0.6, 0.9, p3_net),  # pin 3 — drain (MMBF170: D)
+            _smd(1, -0.95,  1.30, 1.0, 1.4, p1_net),  # pin1: Gate  (MMBF170)
+            _smd(2,  0.95,  1.30, 1.0, 1.4, p2_net),  # pin2: Source (MMBF170)
+            _smd(3,  0.00, -1.30, 1.0, 1.4, p3_net),  # pin3: Drain  (MMBF170)
         ])
 
 
@@ -378,31 +381,30 @@ def wson12(ref, value, nets12, x, y):
 
 def gnd_zone(board):
     """Add a B.Cu GND fill zone covering the full board."""
-    z = Zone()
-    z.net     = NETS["GND"]
-    z.netName = "GND"
-    z.layers  = ["B.Cu"]
-    z.name    = "GND_Fill"
-    z.hatch       = Hatch(style="edge", pitch=0.508)
-    z.connectPads = None   # thermal relief on all pad types
-    z.clearance   = 0.3
-
-    fs = FillSettings()
-    fs.yes       = True
-    fs.thermalGap    = 0.5
-    fs.thermalBridgeWidth = 0.5
-    z.fillSettings = fs
-
-    poly = ZonePolygon()
-    margin = 0.3
+    EDGE_CLEARANCE = 1.0   # pour pullback from board edge (burr-short prevention)
+    z = Zone(
+        net=NETS["GND"],
+        netName="GND",
+        layers=["B.Cu"],
+        tstamp=str(_uuid.uuid4()),
+        name="GND_Plane_BCu",
+        hatch=Hatch(style="edge", pitch=0.508),
+        clearance=0.254,
+        minThickness=0.25,
+        fillSettings=FillSettings(
+            yes=True,
+            thermalGap=0.5,
+            thermalBridgeWidth=0.5,
+            islandRemovalMode=1,
+        ),
+    )
     corners = [
-        Position(X=BOUNDS_MIN_X + margin, Y=BOUNDS_MIN_Y + margin),
-        Position(X=BOUNDS_MAX_X - margin, Y=BOUNDS_MIN_Y + margin),
-        Position(X=BOUNDS_MAX_X - margin, Y=BOUNDS_MAX_Y - margin),
-        Position(X=BOUNDS_MIN_X + margin, Y=BOUNDS_MAX_Y - margin),
+        Position(X=BOUNDS_MIN_X + EDGE_CLEARANCE, Y=BOUNDS_MIN_Y + EDGE_CLEARANCE),
+        Position(X=BOUNDS_MAX_X - EDGE_CLEARANCE, Y=BOUNDS_MIN_Y + EDGE_CLEARANCE),
+        Position(X=BOUNDS_MAX_X - EDGE_CLEARANCE, Y=BOUNDS_MAX_Y - EDGE_CLEARANCE),
+        Position(X=BOUNDS_MIN_X + EDGE_CLEARANCE, Y=BOUNDS_MAX_Y - EDGE_CLEARANCE),
     ]
-    poly.coordinates = corners
-    z.polygon = poly
+    z.polygons.append(ZonePolygon(coordinates=corners))
     board.zones.append(z)
 
 
