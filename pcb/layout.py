@@ -383,8 +383,9 @@ def gnd_zone(board):
     z.netName = "GND"
     z.layers  = ["B.Cu"]
     z.name    = "GND_Fill"
-    z.hatch   = Hatch(style="edge", pitch=0.508)
-    z.connectPads = type("CP", (), {"clearance": 0.3})()
+    z.hatch       = Hatch(style="edge", pitch=0.508)
+    z.connectPads = None   # thermal relief on all pad types
+    z.clearance   = 0.3
 
     fs = FillSettings()
     fs.yes       = True

@@ -79,35 +79,35 @@
   (net 21 "FP_CAPSULE")
 
   (footprint "MountingHole:MountingHole_2.2mm_M2.2_Pad" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 85 60)
     (descr "M2.2 Mounting Hole")
     (pad "" np_thru_hole circle (at 0 0) (size 2.2 2.2) (drill 2.2) (layers *.Cu *.Mask))
   )
 
   (footprint "MountingHole:MountingHole_2.2mm_M2.2_Pad" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 115 60)
     (descr "M2.2 Mounting Hole")
     (pad "" np_thru_hole circle (at 0 0) (size 2.2 2.2) (drill 2.2) (layers *.Cu *.Mask))
   )
 
   (footprint "MountingHole:MountingHole_2.2mm_M2.2_Pad" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 85 140)
     (descr "M2.2 Mounting Hole")
     (pad "" np_thru_hole circle (at 0 0) (size 2.2 2.2) (drill 2.2) (layers *.Cu *.Mask))
   )
 
   (footprint "MountingHole:MountingHole_2.2mm_M2.2_Pad" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 115 140)
     (descr "M2.2 Mounting Hole")
     (pad "" np_thru_hole circle (at 0 0) (size 2.2 2.2) (drill 2.2) (layers *.Cu *.Mask))
   )
 
   (footprint "op-txm:Fiducial" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 86.0 55.0)
     (descr "Fiducial")
     (fp_rect (start -1.5 -1.5) (end 1.5 1.5) (layer "F.CrtYd") (width 0.05))
@@ -115,7 +115,7 @@
   )
 
   (footprint "op-txm:Fiducial" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 114.0 55.0)
     (descr "Fiducial")
     (fp_rect (start -1.5 -1.5) (end 1.5 1.5) (layer "F.CrtYd") (width 0.05))
@@ -123,7 +123,7 @@
   )
 
   (footprint "op-txm:Fiducial" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 114.0 145.0)
     (descr "Fiducial")
     (fp_rect (start -1.5 -1.5) (end 1.5 1.5) (layer "F.CrtYd") (width 0.05))
@@ -131,7 +131,7 @@
   )
 
   (footprint "op-txm:CapsulePad" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 93.0 56.0)
     (descr "CapsulePad")
     (fp_rect (start -1.0 -1.0) (end 1.0 1.0) (layer "F.CrtYd") (width 0.05))
@@ -143,7 +143,7 @@
   )
 
   (footprint "op-txm:CapsulePad" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 100.0 56.0)
     (descr "CapsulePad")
     (fp_rect (start -1.0 -1.0) (end 1.0 1.0) (layer "F.CrtYd") (width 0.05))
@@ -155,7 +155,7 @@
   )
 
   (footprint "op-txm:CapsulePad" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 107.0 56.0)
     (descr "CapsulePad")
     (fp_rect (start -1.0 -1.0) (end 1.0 1.0) (layer "F.CrtYd") (width 0.05))
@@ -167,7 +167,7 @@
   )
 
   (footprint "op-txm:MMBF170LT1G" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 100.0 63.0)
     (descr "MMBF170LT1G")
     (fp_rect (start -1.6 -1.4) (end 1.6 1.4) (layer "F.CrtYd") (width 0.05))
@@ -184,7 +184,7 @@
   )
 
   (footprint "op-txm:10M" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 93.0 63.0)
     (descr "10M")
     (fp_rect (start -2.2 -1.2) (end 2.2 1.2) (layer "F.CrtYd") (width 0.05))
@@ -199,7 +199,7 @@
   )
 
   (footprint "op-txm:10n" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 93.0 67.0)
     (descr "10n")
     (fp_rect (start -1.3 -0.7) (end 1.3 0.7) (layer "F.CrtYd") (width 0.05))
@@ -214,7 +214,7 @@
   )
 
   (footprint "op-txm:22k" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 107.0 63.0)
     (descr "22k")
     (fp_rect (start -1.3 -0.7) (end 1.3 0.7) (layer "F.CrtYd") (width 0.05))
@@ -229,7 +229,7 @@
   )
 
   (footprint "op-txm:1k" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 107.0 67.0)
     (descr "1k")
     (fp_rect (start -1.3 -0.7) (end 1.3 0.7) (layer "F.CrtYd") (width 0.05))
@@ -244,7 +244,7 @@
   )
 
   (footprint "op-txm:OPA1642AIDR" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 100.0 90.0)
     (descr "OPA1642AIDR")
     (fp_rect (start -4.0 -2.8) (end 4.0 2.8) (layer "F.CrtYd") (width 0.05))
@@ -271,7 +271,7 @@
   )
 
   (footprint "op-txm:10k" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 91.0 87.5)
     (descr "10k")
     (fp_rect (start -1.3 -0.7) (end 1.3 0.7) (layer "F.CrtYd") (width 0.05))
@@ -286,7 +286,7 @@
   )
 
   (footprint "op-txm:47k" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 91.0 90.0)
     (descr "47k")
     (fp_rect (start -1.3 -0.7) (end 1.3 0.7) (layer "F.CrtYd") (width 0.05))
@@ -301,7 +301,7 @@
   )
 
   (footprint "op-txm:47k" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 91.0 92.5)
     (descr "47k")
     (fp_rect (start -1.3 -0.7) (end 1.3 0.7) (layer "F.CrtYd") (width 0.05))
@@ -316,7 +316,7 @@
   )
 
   (footprint "op-txm:150p" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 91.0 95.0)
     (descr "150p")
     (fp_rect (start -1.3 -0.7) (end 1.3 0.7) (layer "F.CrtYd") (width 0.05))
@@ -331,7 +331,7 @@
   )
 
   (footprint "op-txm:SJ_K87" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 91.0 97.5)
     (descr "SJ_K87")
     (fp_rect (start -1.3 -0.7) (end 1.3 0.7) (layer "F.CrtYd") (width 0.05))
@@ -346,7 +346,7 @@
   )
 
   (footprint "op-txm:1M" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 109.0 87.5)
     (descr "1M")
     (fp_rect (start -1.3 -0.7) (end 1.3 0.7) (layer "F.CrtYd") (width 0.05))
@@ -361,7 +361,7 @@
   )
 
   (footprint "op-txm:300k" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 109.0 90.0)
     (descr "300k")
     (fp_rect (start -1.3 -0.7) (end 1.3 0.7) (layer "F.CrtYd") (width 0.05))
@@ -376,7 +376,7 @@
   )
 
   (footprint "op-txm:10u" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 109.0 93.0)
     (descr "10u")
     (fp_rect (start -1.8 -1.0) (end 1.8 1.0) (layer "F.CrtYd") (width 0.05))
@@ -391,7 +391,7 @@
   )
 
   (footprint "op-txm:100n" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 97.0 83.0)
     (descr "100n")
     (fp_rect (start -1.3 -0.7) (end 1.3 0.7) (layer "F.CrtYd") (width 0.05))
@@ -406,7 +406,7 @@
   )
 
   (footprint "op-txm:1u" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 100.0 83.0)
     (descr "1u")
     (fp_rect (start -1.8 -1.0) (end 1.8 1.0) (layer "F.CrtYd") (width 0.05))
@@ -421,7 +421,7 @@
   )
 
   (footprint "op-txm:100n" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 103.0 83.0)
     (descr "100n")
     (fp_rect (start -1.3 -0.7) (end 1.3 0.7) (layer "F.CrtYd") (width 0.05))
@@ -436,7 +436,7 @@
   )
 
   (footprint "op-txm:1u" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 106.0 83.0)
     (descr "1u")
     (fp_rect (start -1.8 -1.0) (end 1.8 1.0) (layer "F.CrtYd") (width 0.05))
@@ -451,7 +451,7 @@
   )
 
   (footprint "op-txm:LR8" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 91.0 130.0)
     (descr "LR8")
     (fp_rect (start -2.5 -3.0) (end 2.5 3.0) (layer "F.CrtYd") (width 0.05))
@@ -470,7 +470,7 @@
   )
 
   (footprint "op-txm:270k" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 87.5 130.0)
     (descr "270k")
     (fp_rect (start -1.3 -0.7) (end 1.3 0.7) (layer "F.CrtYd") (width 0.05))
@@ -485,7 +485,7 @@
   )
 
   (footprint "op-txm:10k" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 87.5 133.0)
     (descr "10k")
     (fp_rect (start -1.3 -0.7) (end 1.3 0.7) (layer "F.CrtYd") (width 0.05))
@@ -500,7 +500,7 @@
   )
 
   (footprint "op-txm:10u/100V" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 91.0 125.0)
     (descr "10u/100V")
     (fp_rect (start -1.8 -1.0) (end 1.8 1.0) (layer "F.CrtYd") (width 0.05))
@@ -515,7 +515,7 @@
   )
 
   (footprint "op-txm:4u7" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 94.0 130.0)
     (descr "4u7")
     (fp_rect (start -1.8 -1.0) (end 1.8 1.0) (layer "F.CrtYd") (width 0.05))
@@ -530,7 +530,7 @@
   )
 
   (footprint "op-txm:TPS7A3901" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 100.0 130.0)
     (descr "TPS7A3901")
     (fp_rect (start -2.0 -2.0) (end 2.0 2.0) (layer "F.CrtYd") (width 0.05))
@@ -567,7 +567,7 @@
   )
 
   (footprint "op-txm:127k" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 104.0 126.0)
     (descr "127k")
     (fp_rect (start -1.3 -0.7) (end 1.3 0.7) (layer "F.CrtYd") (width 0.05))
@@ -582,7 +582,7 @@
   )
 
   (footprint "op-txm:10k" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 107.0 126.0)
     (descr "10k")
     (fp_rect (start -1.3 -0.7) (end 1.3 0.7) (layer "F.CrtYd") (width 0.05))
@@ -597,7 +597,7 @@
   )
 
   (footprint "op-txm:127k" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 104.0 129.0)
     (descr "127k")
     (fp_rect (start -1.3 -0.7) (end 1.3 0.7) (layer "F.CrtYd") (width 0.05))
@@ -612,7 +612,7 @@
   )
 
   (footprint "op-txm:10k" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 107.0 129.0)
     (descr "10k")
     (fp_rect (start -1.3 -0.7) (end 1.3 0.7) (layer "F.CrtYd") (width 0.05))
@@ -627,7 +627,7 @@
   )
 
   (footprint "op-txm:10u" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 104.0 132.5)
     (descr "10u")
     (fp_rect (start -1.8 -1.0) (end 1.8 1.0) (layer "F.CrtYd") (width 0.05))
@@ -642,7 +642,7 @@
   )
 
   (footprint "op-txm:10u" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 107.0 132.5)
     (descr "10u")
     (fp_rect (start -1.8 -1.0) (end 1.8 1.0) (layer "F.CrtYd") (width 0.05))
@@ -657,7 +657,7 @@
   )
 
   (footprint "op-txm:BAT54S" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 91.0 138.0)
     (descr "BAT54S")
     (fp_rect (start -1.6 -1.4) (end 1.6 1.4) (layer "F.CrtYd") (width 0.05))
@@ -674,7 +674,7 @@
   )
 
   (footprint "op-txm:100n/100V" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 91.0 141.5)
     (descr "100n/100V")
     (fp_rect (start -1.3 -0.7) (end 1.3 0.7) (layer "F.CrtYd") (width 0.05))
@@ -689,7 +689,7 @@
   )
 
   (footprint "op-txm:4u7/100V" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 94.0 138.0)
     (descr "4u7/100V")
     (fp_rect (start -1.8 -1.0) (end 1.8 1.0) (layer "F.CrtYd") (width 0.05))
@@ -704,7 +704,7 @@
   )
 
   (footprint "op-txm:10mH" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 97.0 138.0)
     (descr "10mH")
     (fp_rect (start -2.2 -1.2) (end 2.2 1.2) (layer "F.CrtYd") (width 0.05))
@@ -719,7 +719,7 @@
   )
 
   (footprint "op-txm:10u" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 100.0 138.0)
     (descr "10u")
     (fp_rect (start -1.8 -1.0) (end 1.8 1.0) (layer "F.CrtYd") (width 0.05))
@@ -734,7 +734,7 @@
   )
 
   (footprint "op-txm:THPad" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 87.0 144.0)
     (descr "THPad")
     (fp_rect (start -1.55 -1.55) (end 1.55 1.55) (layer "F.CrtYd") (width 0.05))
@@ -746,7 +746,7 @@
   )
 
   (footprint "op-txm:THPad" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 90.0 144.0)
     (descr "THPad")
     (fp_rect (start -1.55 -1.55) (end 1.55 1.55) (layer "F.CrtYd") (width 0.05))
@@ -758,7 +758,7 @@
   )
 
   (footprint "op-txm:THPad" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 93.0 144.0)
     (descr "THPad")
     (fp_rect (start -1.55 -1.55) (end 1.55 1.55) (layer "F.CrtYd") (width 0.05))
@@ -770,7 +770,7 @@
   )
 
   (footprint "op-txm:THPad" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 96.0 144.0)
     (descr "THPad")
     (fp_rect (start -1.55 -1.55) (end 1.55 1.55) (layer "F.CrtYd") (width 0.05))
@@ -782,7 +782,7 @@
   )
 
   (footprint "op-txm:THPad" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 99.0 144.0)
     (descr "THPad")
     (fp_rect (start -1.55 -1.55) (end 1.55 1.55) (layer "F.CrtYd") (width 0.05))
@@ -794,7 +794,7 @@
   )
 
   (footprint "op-txm:NPTH_Slot" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 86.0 148.0)
     (descr "NPTH_Slot")
     (fp_rect (start -2.0 -2.0) (end 2.0 2.0) (layer "F.CrtYd") (width 0.05))
@@ -805,7 +805,7 @@
   )
 
   (footprint "op-txm:NPTH_Slot" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 114.0 148.0)
     (descr "NPTH_Slot")
     (fp_rect (start -2.0 -2.0) (end 2.0 2.0) (layer "F.CrtYd") (width 0.05))
@@ -816,7 +816,7 @@
   )
 
   (footprint "op-txm:THPad" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 106.0 144.0)
     (descr "THPad")
     (fp_rect (start -1.55 -1.55) (end 1.55 1.55) (layer "F.CrtYd") (width 0.05))
@@ -828,7 +828,7 @@
   )
 
   (footprint "op-txm:THPad" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 110.0 144.0)
     (descr "THPad")
     (fp_rect (start -1.55 -1.55) (end 1.55 1.55) (layer "F.CrtYd") (width 0.05))
@@ -840,7 +840,7 @@
   )
 
   (footprint "op-txm:THPad" (layer "F.Cu")
-    (tedit 6a14ee1b)
+    (tedit 6a14f348)
     (at 114.0 144.0)
     (descr "THPad")
     (fp_rect (start -1.55 -1.55) (end 1.55 1.55) (layer "F.CrtYd") (width 0.05))
@@ -856,15 +856,15 @@
   (gr_line (start 120 150) (end 80 150) (layer "Edge.Cuts") (width 0.05))
   (gr_line (start 80 150) (end 80 50) (layer "Edge.Cuts") (width 0.05))
 
-  (via (at 88.0 72.0) (size 0.6) (drill 0.3) (layers "F.Cu" "B.Cu") (net 1) (tstamp 91f23354-0105-430f-9351-79114acf5a3c))
-  (via (at 100.0 72.0) (size 0.6) (drill 0.3) (layers "F.Cu" "B.Cu") (net 1) (tstamp 8eb0b560-29b7-4a0e-8004-a367e41f7886))
-  (via (at 112.0 72.0) (size 0.6) (drill 0.3) (layers "F.Cu" "B.Cu") (net 1) (tstamp d356f1c4-5ecb-4c71-beca-5a1e9f2d8f35))
-  (via (at 88.0 98.0) (size 0.6) (drill 0.3) (layers "F.Cu" "B.Cu") (net 1) (tstamp cc76733e-4a20-43e7-9ed3-81d1f0dec564))
-  (via (at 100.0 98.0) (size 0.6) (drill 0.3) (layers "F.Cu" "B.Cu") (net 1) (tstamp 91cb0f23-5239-461f-b51f-35ef03862671))
-  (via (at 112.0 98.0) (size 0.6) (drill 0.3) (layers "F.Cu" "B.Cu") (net 1) (tstamp e59f20d8-677d-4db2-b803-25bff4687975))
-  (via (at 88.0 121.0) (size 0.6) (drill 0.3) (layers "F.Cu" "B.Cu") (net 1) (tstamp c10c7e7b-b77b-4908-bb6b-6f570009bf95))
-  (via (at 100.0 121.0) (size 0.6) (drill 0.3) (layers "F.Cu" "B.Cu") (net 1) (tstamp e4df434c-9b3f-4378-ad87-5db69841e90a))
-  (via (at 112.0 121.0) (size 0.6) (drill 0.3) (layers "F.Cu" "B.Cu") (net 1) (tstamp 69f0d382-1d52-47b2-b113-c65ba17eada2))
+  (via (at 88.0 72.0) (size 0.6) (drill 0.3) (layers "F.Cu" "B.Cu") (net 1) (tstamp dd3f5372-eabb-4157-8d4a-9bb1b9186172))
+  (via (at 100.0 72.0) (size 0.6) (drill 0.3) (layers "F.Cu" "B.Cu") (net 1) (tstamp 020e573f-6eb1-49a1-8f35-caad0cea8475))
+  (via (at 112.0 72.0) (size 0.6) (drill 0.3) (layers "F.Cu" "B.Cu") (net 1) (tstamp 3c415e26-6b98-47d3-8bb5-a803134c8c0f))
+  (via (at 88.0 98.0) (size 0.6) (drill 0.3) (layers "F.Cu" "B.Cu") (net 1) (tstamp c73ace9e-88d2-4a5c-86df-8d949ab6e528))
+  (via (at 100.0 98.0) (size 0.6) (drill 0.3) (layers "F.Cu" "B.Cu") (net 1) (tstamp 8a9e6c90-e6ff-4994-900f-3ecf8ccb2609))
+  (via (at 112.0 98.0) (size 0.6) (drill 0.3) (layers "F.Cu" "B.Cu") (net 1) (tstamp d8447adb-c34b-4b10-a673-4bfccc52a0ff))
+  (via (at 88.0 121.0) (size 0.6) (drill 0.3) (layers "F.Cu" "B.Cu") (net 1) (tstamp ca1ce79a-e7ad-4963-9618-dad4b87798e6))
+  (via (at 100.0 121.0) (size 0.6) (drill 0.3) (layers "F.Cu" "B.Cu") (net 1) (tstamp df246db7-f7ac-48fa-b687-d70948225b32))
+  (via (at 112.0 121.0) (size 0.6) (drill 0.3) (layers "F.Cu" "B.Cu") (net 1) (tstamp 4e797a65-45b6-4e03-8ab3-57c4b1aae94b))
 
   (zone (net 0) (net_name "HV_Keepout") (layer "F.Cu") (name "HV_Keepout") (hatch edge 0.508)
     (connect_pads (clearance 0.25))
@@ -881,7 +881,7 @@
     )
   )
   (zone (net 1) (net_name "GND") (layer "B.Cu") (name "GND_Fill") (hatch edge 0.508)
-    (connect_pads <__main__.CP object at 0x7f8edfc201d0> (clearance 0.254))
+    (connect_pads (clearance 0.3))
     (min_thickness 0.254)
     (fill yes (thermal_gap 0.5) (thermal_bridge_width 0.5))
   )
