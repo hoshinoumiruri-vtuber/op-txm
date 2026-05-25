@@ -24,13 +24,13 @@ Transformer connection
   Reversed 3:1 — op-amp drives 3× winding (secondary, 720 H), XLR output
   from 1× winding (primary, 80 H).  Standard Neumann/AKG practice:
     · Op-amp load : 600 Ω × 9 = 5.4 kΩ  (easy drive, full headroom)
-    · Zout at XLR : ≈ 61 Ω  (DCR_pri + reflected, excellent for cable)
+    · Zout at XLR : ≈ 255 Ω  (DCR_pri + reflected DCR_sec/n²)
     · Voltage gain through TX: ×(1/3) = −9.5 dB
 
   L_pri = 80 H  (community bench measurement; verify with LCR meter)
   n = 3  (1:3 tap)  →  L_sec = 720 H  (3× winding, driven winding)
   k ≈ 0.999997  (leakage ~0.5 mH referred to primary → HF −3dB estimated)
-  DCR_pri = 30 Ω, DCR_sec = 270 Ω  (estimated — update after bench measurement)
+  DCR_pri = 105 Ω ±5%, DCR_sec = 1.25 kΩ ±5%  (Neutrik datasheet confirmed)
 
 Outputs
 -------
@@ -93,8 +93,8 @@ L_PRI     = 80.0        # H  — community measurement; verify at bench
 L_SEC     = L_PRI * N_TURNS**2   # = 720 H
 L_LEAK    = 5e-4        # H  referred to primary (~0.5 mH → HF corner ~42 kHz)
 K_COUPLE  = (1.0 - L_LEAK / L_PRI) ** 0.5   # coupling coefficient
-DCR_PRI   = 30.0        # Ω  — estimated; measure at bench
-DCR_SEC   = DCR_PRI * N_TURNS**2  # = 270 Ω (scaled by n²)
+DCR_PRI   = 105.0       # Ω  — Neutrik datasheet: 105 Ω ±5% (1× winding)
+DCR_SEC   = 1250.0      # Ω  — Neutrik datasheet: 1.25 kΩ ±5% (3× winding)
 
 # Load
 R_LOAD_EACH = 600.0     # Ω per balanced leg (600 Ω standard XLR load, each side)
@@ -224,9 +224,9 @@ Xeq  eq_inp  eq_inn  eq_out  opamp1
 * This is the standard Neumann/AKG approach: the high-turn winding sees the buffer,
 * the low-turn winding drives the XLR cable.
 *   Op-amp load : 600Ω × (3/1)² = 5.4 kΩ  (easy, full headroom)
-*   Zout at XLR : (Zop + DCR_sec)/9 + DCR_pri ≈ 61 Ω  (excellent for cable drive)
+*   Zout at XLR : (Zop + DCR_sec)/9 + DCR_pri ≈ 255 Ω
 *   Voltage     : V_xlr = V_opamp / 3  (−9.5 dB, compensated by JFET+EQ gain)
-* Estimated parameters — update DCR_PRI, DCR_SEC, L_LEAK after bench measurement
+* DCR values from Neutrik datasheet; L_LEAK TBD at bench
 Rdcr_in   eq_out   txs_hi  {DCR_SEC:.4g}
 Lsec      txs_hi   txs_lo  {L_SEC}H
 Lpri      txp_hi   txp_lo  {L_PRI}H
@@ -446,9 +446,9 @@ print()
 print("─" * 68)
 print("Summary:")
 print(f"  Analytical gain (K47, 1 kHz): {20*np.log10(Av_total_k47):.1f} dB")
-print(f"  Transformer step-down        : {20*np.log10(1/N_TURNS):.1f} dB (reversed 3:1, Zout≈61Ω)")
+print(f"  Transformer step-down        : {20*np.log10(1/N_TURNS):.1f} dB (reversed 3:1, Zout≈255Ω)")
 print(f"  Transformer LF −3 dB         : {lf_corner:.2f} Hz  (estimated)")
 print(f"  Transformer HF −3 dB         : {hf_corner/1e3:.0f} kHz  (estimated)")
 print(f"  All checks: {'PASS' if all_pass else 'FAIL (check log)'}")
 print()
-print("NOTE: Transformer values are estimates. Update sim after bench measurement of DCR/Lleak.")
+print("NOTE: DCR confirmed from Neutrik datasheet. L_LEAK TBD — update after bench measurement.")

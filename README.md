@@ -34,7 +34,7 @@ Solid-state condenser microphone with transformer-balanced output.
 | Power | LR8 pre-regulator (48V phantom → 35.2V). Diode charge pump → V_BOOST for JFET drain. TPS7A3901 WSON-12 → ±15V op-amp supply. Total draw 9.1 mA typ (< 10 mA IEC 61938). |
 | Input | High-Z JFET buffer (MMBF170LT1G SOT-23) with op-amp DC servo for bias stability. |
 | EQ | Active de-emphasis network tuned for K67/K87. Flat (K47) or −6 dB shelf above ~22 kHz (K87) via SJ1 solder bridge. |
-| Output | Neutrik NTE10/3, reversed 3:1 connection (op-amp drives 3× winding, XLR from 1× winding): transformer-balanced, galvanic isolation, passive CMRR, Zout ≈ 61 Ω. |
+| Output | Neutrik NTE10/3, reversed 3:1 connection (op-amp drives 3× winding, XLR from 1× winding): transformer-balanced, galvanic isolation, passive CMRR, Zout ≈ 255 Ω. |
 
 ---
 
@@ -51,7 +51,7 @@ Solid-state condenser microphone with transformer-balanced output.
 | Mounting | 4× M2.2 NPTH, rectangular pattern (30×80 mm) |
 | Assembly | SMD for all active/passive components; through-hole for capsule leads and NTE10/3 transformer leads |
 | De-emphasis network | R_shelf = 47 kΩ, C_deemph = 150 pF — −6 dB shelf above ~22 kHz |
-| Output stage | Neutrik NTE10/3, reversed 3:1 connection (−9.5 dB, Zout ≈ 61 Ω) — standard Neumann/AKG practice |
+| Output stage | Neutrik NTE10/3, reversed 3:1 connection (−9.5 dB, Zout ≈ 255 Ω) — standard Neumann/AKG practice |
 | EQ op-amp | OPA1642AIDR (dual JFET-input, GBW=11 MHz, EIN=5.1 nV/√Hz) |
 | Output balance | Transformer CMRR (passive) — no active output op-amp required |
 | Output impedance | ~540 Ω referred to secondary (JFET 60Ω × n²=9) |
@@ -72,7 +72,8 @@ Solid-state condenser microphone with transformer-balanced output.
 | Frequency response | 40 Hz – 20 kHz ±0.5 dB | Distributor spec |
 | Solderability | IEC 68-2-20 compliant | Neutrik datasheet |
 | Primary inductance | ~80 H (community measurement) | GroupDIY forum |
-| Primary DCR | **TBD — measure at bench** | — |
+| Primary DCR (1× winding) | 105 Ω ±5% | Neutrik datasheet |
+| Secondary DCR (3× winding) | 1.25 kΩ ±5% | Neutrik datasheet |
 | Leakage inductance | **TBD — measure at bench** | — |
 
 > After bench measurement, update DCR and leakage inductance values in `sim/tx_output.py` and `sim/signal_chain.py`.
@@ -147,14 +148,14 @@ K47/K87 modes, JFET → OPA1642 EQ → NTE10/3 → 600 Ω balanced load.
 
 | Parameter | Value | Notes |
 |---|---|---|
-| Differential gain @ 1 kHz (K47) | +17.2 dB | Balanced output, reversed 3:1 TX |
-| Differential gain @ 20 kHz (K47) | +17.2 dB | Flat within 0.1 dB |
+| Differential gain @ 1 kHz (K47) | +16.0 dB | Balanced output, reversed 3:1 TX |
+| Differential gain @ 20 kHz (K47) | +16.0 dB | Flat within 0.1 dB |
 | K87 shelf @ 20 kHz | −3.7 dB | Expected — shelf corner is 22.6 kHz |
 | K87 shelf @ 100 kHz | −5.9 dB | PASS (target −6 dB ±1.5 dB) |
 | Bandwidth LF −3 dB (K47) | 10.2 Hz | Sub-Hz with servo-locked Q-point |
 | Bandwidth HF −3 dB (K47) | > 100 kHz | Well above audio band |
 | Phase @ 1 kHz (K47) | +0.5° | — |
-| Transformer connection | Reversed 3:1 (−9.5 dB) | Op-amp drives 3× winding; Zout ≈ 61 Ω at XLR |
+| Transformer connection | Reversed 3:1 (−9.5 dB) | Op-amp drives 3× winding; Zout ≈ 255 Ω at XLR |
 | Transformer LF −3 dB | ~0.08 Hz | Estimated (Ldriven=720 H, 3× winding) |
 | Transformer HF −3 dB | ~390 kHz analytical | Estimated (Lleak TBD at bench); reversed 3:1 extends HF vs forward |
 

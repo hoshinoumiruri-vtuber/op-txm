@@ -63,9 +63,9 @@ import matplotlib.pyplot as plt
 N_TURNS = 3.0          # voltage ratio of driven:output winding (3:1 step-down)
 L_PRI_H = 80.0         # 1× winding inductance [H] — community measurement; verify at bench
 L_SEC_H = L_PRI_H * N_TURNS ** 2   # = 720 H  (3× driven winding)
-L_LEAK_H = 0.0005      # leakage inductance referred to 1× (output) winding [H] — TBD
-DCR_PRI_OHM = 30.0     # 1× winding DCR [Ω] — output side; TBD at bench
-DCR_SEC_OHM = 270.0    # 3× winding DCR [Ω] — input side; = 30 × n² = 270 Ω estimated
+L_LEAK_H = 0.0005      # leakage inductance referred to 1× (output) winding [H] — TBD at bench
+DCR_PRI_OHM = 105.0    # 1× winding DCR [Ω] — Neutrik datasheet: 105 Ω ±5%
+DCR_SEC_OHM = 1250.0   # 3× winding DCR [Ω] — Neutrik datasheet: 1.25 kΩ ±5%
 
 # ── Circuit parameters ────────────────────────────────────────────────────────
 R_SRC_OHM = 100.0      # op-amp output impedance after EQ [Ω] (approximate)
