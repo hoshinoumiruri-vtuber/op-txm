@@ -60,7 +60,7 @@ F_OSC       = 100e3     # Hz — oscillator frequency (well above audio band)
 C_PUMP      = 100e-9    # F  — 100 nF pump capacitors (X7R 0402, rated 100 V)
 C_OUT       = 4.7e-6    # F  — 4.7 µF output reservoir (X5R 0603, rated 100 V)
 R_SOURCE    = 6.8e3     # Ω  — phantom source resistance (per IEC 61938)
-I_LOAD      = 5e-3      # A  — estimated load (bias + JFET drain), < 7 mA budget
+I_LOAD      = 1.636e-3  # A  — JFET drain current (servo-locked Ids); only load on 72V rail
 R_LPF1      = 10e3     # Ω  — post-filter R (series, feeds LC filter)
 L_LPF       = 10e-3    # H  — 10 mH inductor (common-mode choke, SMD)
 C_LPF       = 10e-6    # F  — 10 µF filter cap after inductor
@@ -109,7 +109,7 @@ print(f"  Raw ripple (p-p) : {V_RIPPLE_RAW*1e3:.3f} mV  (before LC filter)")
 print(f"  LC corner freq   : {f_corner:.1f} Hz")
 print(f"  LC attenuation   : {attenuation:.2e}  at {F_OSC/1e3:.0f} kHz")
 print(f"  Filtered ripple  : {V_RIPPLE_FILTERED*1e6:.4f} µV  (target: < 1 mV)")
-print(f"  Total I_draw     : {I_LOAD*1e3:.1f} mA  (budget: < 7 mA)")
+print(f"  72V rail I_load  : {I_LOAD*1e3:.3f} mA  (JFET Ids; full phantom budget → phantom_budget.py)")
 print("=" * 55)
 
 if abs(V_OUT_DC - 72.0) > 1.0:
@@ -206,7 +206,7 @@ Cpump mid_top clk      {C_PUMP}
 D2    mid_top vout_raw BAT54
 Cout  vout_raw 0       {C_OUT} IC=60
 
-* Load: represents bias current < 7 mA
+* Load: JFET drain current at 72V rail (servo-locked Ids = 1.636 mA)
 Rload vout_raw 0 {72.0 / I_LOAD:.1f}
 
 * LC post-filter omitted — validated analytically (0.27 µV ripple).
