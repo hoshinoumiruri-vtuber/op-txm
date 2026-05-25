@@ -75,19 +75,21 @@ Solid-state condenser microphone with transformer-balanced output.
 | Primary DCR | **TBD — measure at bench** | — |
 | Leakage inductance | **TBD — measure at bench** | — |
 
-> Update `sim/tx_output.py` with measured DCR and leakage inductance values before running the frequency response simulation.
+> After bench measurement, update DCR and leakage inductance values in `sim/tx_output.py` and `sim/signal_chain.py`.
 
-### Wiring / connection
+### Wiring / connection — reversed 3:1 (Neumann/AKG standard)
+
+Op-amp EQ output drives the **3× (secondary) winding**; XLR balanced output comes from the **1× (primary) winding**.
 
 ```
-NTE10/3 lead colour (typical):
-  Primary:
-    Red   → JFET buffer output (hot)
-    Black → GND (primary return / signal GND)
-  Secondary (1:3 tap):
-    Blue  → XLR pin 2 (hot)
-    White → XLR pin 3 (cold / secondary CT or full secondary)
-    Yellow→ Secondary centre tap → phantom bypass (33 kΩ to pin 2, 33 kΩ to pin 3)
+NTE10/3 lead colour (typical) — reversed 3:1 connection:
+  3× winding (driven by EQ op-amp):
+    Blue  → EQ op-amp output (hot drive)
+    White → Signal GND (3× winding return)
+    Yellow→ Centre tap → signal GND (if used; tie to GND or leave floating)
+  1× winding (XLR balanced output):
+    Red   → XLR pin 2 (hot)
+    Black → XLR pin 3 (cold)
 ```
 
 > **Verify lead colours against the physical unit** — Neutrik wire colours are not always consistent across production batches. Use an LCR meter to confirm winding connections before soldering.
