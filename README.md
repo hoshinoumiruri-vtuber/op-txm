@@ -220,6 +220,32 @@ python sim/tx_output.py
 python sim/generate_plots.py
 ```
 
+### Generating PCB Files
+
+The KiCad project is fully code-driven. Two scripts must be run before opening KiCad:
+
+```bash
+# 1. Generate the KiCad project file (net classes, DRC rules, HV net assignments)
+python pcb/project.py        # → pcb/op-txm.kicad_pro
+
+# 2. Generate the board layout (outline, component placement, GND fill zone)
+python pcb/layout.py         # → pcb/op-txm.kicad_pcb + pcb/op_txm_layout.png
+```
+
+Open the project in KiCad 10:
+
+```bash
+kicad pcb/op-txm.kicad_pro
+```
+
+> Always open via `.kicad_pro`, not `.kicad_pcb` directly — the project file carries the HV net class assignments and DRC rules. If you regenerate either file, re-open the project in KiCad (the board file is reloaded automatically).
+
+After opening in KiCad:
+1. **Fill All Zones** (`B` key) — floods the B.Cu GND plane
+2. **Run DRC** — verify zero clearance violations, zero unrouted nets flagged as errors
+3. **Route remaining nets** interactively (capsule signal, HV supply, EQ → transformer)
+4. **Export Gerbers** — `File → Fabrication Outputs → Gerbers`, output to `gerbers/`
+
 ---
 
 ## 7. Project Phases
