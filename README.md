@@ -250,7 +250,7 @@ After opening in KiCad:
 
 ## 7. Project Phases
 
-### Phase 1: Simulation — IN PROGRESS
+### Phase 1: Simulation — COMPLETE
 
 - [x] Power stage simulation (boost_72v.py) — 0.088 µV ripple PASS
 - [x] Phantom power budget (phantom_budget.py) — 9.09 mA typ PASS (< 10 mA IEC 61938)
@@ -258,17 +258,18 @@ After opening in KiCad:
 - [x] K47/K87 EQ simulation (dual_capsule_eq.py)
 - [x] Transformer output stage analytical model (tx_output.py) — LF=0.30 Hz, HF=415 kHz
 - [x] Full signal-chain AC sweep (signal_chain.py) — 16.0 dB diff gain, K87 shelf −5.9 dB @ 100 kHz PASS
-- [ ] Measure NTE10/3 DCR and leakage inductance (bench LCR meter)
-- [ ] Update tx_output.py and signal_chain.py with measured values
+- [ ] Measure NTE10/3 DCR and leakage inductance (bench LCR meter) — deferred to Phase 4
+- [ ] Update tx_output.py and signal_chain.py with measured values — deferred to Phase 4
 
-### Phase 2: PCB Layout (code-driven via kiutils)
+### Phase 2: PCB Layout (code-driven via kiutils) — IN PROGRESS
 
-- [ ] Add kiutils to pyproject.toml, scaffold pcb/layout.py
-- [ ] Define board outline: 40×100 mm, 4× M2.2 NPTH (30×80 mm pattern)
-- [ ] Place components via script: power stage, JFET buffer, EQ, transformer TH pads
-- [ ] Define HV keepout zone, B.Cu GND plane
-- [ ] Route critical nets (capsule signal, HV supply) via script
-- [ ] Add NPTH zip-tie slots (2.5 mm) at PCB edge
+- [x] Add kiutils to pyproject.toml, scaffold pcb/layout.py
+- [x] Generate .kicad_pro (pcb/project.py) with HV net class and DRC rules
+- [x] Define board outline: 40×100 mm, 4× M2.2 NPTH (30×80 mm pattern) — pcb/outline.py
+- [x] Place components via script: power stage, JFET buffer, EQ, transformer TH pads
+- [x] Define HV keepout zone (outline.py), B.Cu GND plane (layout.py)
+- [x] Add NPTH zip-tie slots (2.5 mm) at PCB edge
+- [ ] Route critical nets (capsule signal, HV supply, EQ output) — interactive in KiCad
 - [ ] DRC — zero clearance violations
 - [ ] Fill All Zones, export Gerbers
 
