@@ -58,7 +58,7 @@ ZONE_INPUT  = (86.0,  52.0, 114.0,  68.0)
 ZONE_AUDIO  = (86.0,  78.0, 114.0, 118.0)
 ZONE_POWER  = (86.0, 123.0, 114.0, 148.0)
 
-FIDUCIAL_POS = [(85.0, 55.0), (115.0, 55.0), (115.0, 145.0)]
+FIDUCIAL_POS = [(85.0, 55.0), (115.0, 55.0), (113.0, 121.0)]
 
 MHOLE_POS = [
     ( 85.0,  60.0),   # top-left
@@ -531,11 +531,11 @@ def build_layout():
     components.append(r0603("C_INT", "10u",
                              "SRV_INT", "SRV_OUT", 109.0, 93.0))
 
-    # Decoupling caps for ±15V supply (near U1)
-    components.append(r0402("C_P15_100n", "100n", "P15V", "GND", 97.0, 83.0))
+    # Decoupling caps for ±15V supply (near U1) — 4 mm spacing so courtyards clear
+    components.append(r0402("C_P15_100n", "100n", "P15V", "GND",  96.0, 83.0))
     components.append(r0603("C_P15_1u",   "1u",   "P15V", "GND", 100.0, 83.0))
-    components.append(r0402("C_N15_100n", "100n", "N15V", "GND", 103.0, 83.0))
-    components.append(r0603("C_N15_1u",   "1u",   "N15V", "GND", 106.0, 83.0))
+    components.append(r0402("C_N15_100n", "100n", "N15V", "GND", 104.0, 83.0))
+    components.append(r0603("C_N15_1u",   "1u",   "N15V", "GND", 108.0, 83.0))
 
     # ══════════════════════════════════════════════════════════════════════
     # BOTTOM ZONE  Y=[123,148]  — Power + Transformer + XLR
@@ -547,17 +547,16 @@ def build_layout():
                              "LR8_ADJ", "P48V_LDO", "PHANTOM", "PHANTOM",
                              91.0, 130.0))
 
-    # LR8 programming resistors (sets Vout = 35.2V)
-    # Vout = 1.22 × (1 + R1/R2) → R1/R2 ≈ 27.8
-    # R2 = 10kΩ, R1 = 270kΩ (use 270k + 8.2k series, or single 270k for ~34V)
+    # LR8 programming resistors — placed left of U2 (U2 courtyard ±2.5 mm,
+    # 4 mm X-offset gives 4−3.8 = 0.2 mm courtyard gap, within safe area)
     components.append(r0402("R_LR8_1", "270k",
-                             "P48V_LDO", "LR8_ADJ", 87.5, 130.0))
+                             "P48V_LDO", "LR8_ADJ", 87.0, 127.0))
     components.append(r0402("R_LR8_2", "10k",
-                             "LR8_ADJ", "GND", 87.5, 133.0))
+                             "LR8_ADJ", "GND", 87.0, 130.0))
 
-    # LR8 output decoupling
-    components.append(r0603("C_LR8_IN",  "10u/100V", "PHANTOM",   "GND", 91.0, 125.0))
-    components.append(r0603("C_LR8_OUT", "4u7",      "P48V_LDO",  "GND", 94.0, 130.0))
+    # LR8 decoupling — input cap above U2, output cap to the right
+    components.append(r0603("C_LR8_IN",  "10u/100V", "PHANTOM",  "GND", 91.0, 125.0))
+    components.append(r0603("C_LR8_OUT", "4u7",      "P48V_LDO", "GND", 96.0, 130.0))
 
     # U3: TPS7A3901 WSON-12 3×3 mm — ±15V dual LDO from 35.2V
     # TPS7A3901 pinout (WSON-12, 12 pins + EP):
@@ -582,15 +581,16 @@ def build_layout():
     ]
     components.append(wson12("U3", "TPS7A3901", tps_nets, 100.0, 130.0))
 
-    # TPS7A3901 programming resistors (+15V / -15V setpoints)
+    # TPS7A3901 programming resistors — placed right of U3 (U3 courtyard ±2.0 mm,
+    # 4 mm X-offset gives 4−3.3 = 0.7 mm courtyard gap)
     components.append(r0402("R_TPS_P1", "127k", "P15V",       "TPS_FB_POS", 104.0, 126.0))
     components.append(r0402("R_TPS_P2", "10k",  "TPS_FB_POS", "GND",        107.0, 126.0))
     components.append(r0402("R_TPS_N1", "127k", "N15V",       "TPS_FB_NEG", 104.0, 129.0))
     components.append(r0402("R_TPS_N2", "10k",  "TPS_FB_NEG", "GND",        107.0, 129.0))
 
-    # TPS7A3901 output decoupling
-    components.append(r0603("C_P15_OUT", "10u", "P15V", "GND", 104.0, 132.5))
-    components.append(r0603("C_N15_OUT", "10u", "N15V", "GND", 107.0, 132.5))
+    # TPS7A3901 output decoupling — 4 mm X-spacing so 0603 courtyards clear
+    components.append(r0603("C_P15_OUT", "10u", "P15V", "GND", 104.0, 133.0))
+    components.append(r0603("C_N15_OUT", "10u", "N15V", "GND", 108.0, 133.0))
 
     # Charge pump — 1-stage Cockcroft-Walton 48V → 72V (V_BOOST)
     # D1: BAT54S (SOT-23, series dual Schottky) — anode pair = pin3, cathode = pin1+pin2
@@ -600,14 +600,15 @@ def build_layout():
                              91.0, 138.0))
 
     # C_PUMP: 100 nF 0402 — pump capacitor (PHANTOM → V_BOOST)
-    components.append(r0402("C_PUMP", "100n/100V", "PHANTOM", "V_BOOST", 91.0, 141.5))
+    components.append(r0402("C_PUMP", "100n/100V", "PHANTOM", "V_BOOST", 91.0, 141.0))
 
-    # C_RSVR: 4.7 µF — output reservoir capacitor (100V rated)
-    components.append(r0603("C_RSVR", "4u7/100V", "V_BOOST", "GND", 94.0, 138.0))
-
-    # LC post-filter: 10 mH + 10 µF (between raw pump and clean V_BOOST rail)
-    components.append(r0805("L1",    "10mH",  "V_BOOST", "V_BOOST", 97.0, 138.0))
-    components.append(r0603("C_LPF", "10u",   "V_BOOST", "GND",     100.0, 138.0))
+    # Charge pump output — space at 4 mm so SOT-23 + 0603 + 0805 courtyards clear
+    # D1 right edge: 91+1.5=92.5; C_RSVR left edge: 95−1.8=93.2 → gap 0.7 mm
+    # C_RSVR right: 95+1.8=96.8; L1 left: 100−2.2=97.8 → gap 1.0 mm
+    # L1 right: 100+2.2=102.2; C_LPF left: 105−1.8=103.2 → gap 1.0 mm
+    components.append(r0603("C_RSVR", "4u7/100V", "V_BOOST", "GND",  95.0, 138.0))
+    components.append(r0805("L1",    "10mH",  "V_BOOST", "V_BOOST", 100.0, 138.0))
+    components.append(r0603("C_LPF", "10u",   "V_BOOST", "GND",     105.0, 138.0))
 
     # ── Transformer TH pads (op-txm reversed 3:1 connection) ────────────
     # 3× secondary (driven by op-amp EQ output):
