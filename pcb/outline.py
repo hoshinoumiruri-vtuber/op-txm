@@ -2,9 +2,9 @@
 =================================================
 Generates a blank KiCad 10 board file:
 
-  - Board outline: 40 mm (W) × 100 mm (L)
+  - Board outline: 35 mm (W) × 85 mm (L)
   - 4× M2.2 NPTH mounting holes, 30×80 mm rectangular pattern
-  - HV keepout zone: bottom 30 mm (power zone)
+  - HV keepout zone: bottom ~41 mm (power + transformer zone)
 
 Usage
 -----
@@ -20,8 +20,8 @@ from pathlib import Path
 
 BOARD_CENTER_X  = 100.0
 BOARD_CENTER_Y  = 100.0
-BOARD_W         = 40.0
-BOARD_H         = 100.0
+BOARD_W         = 35.0
+BOARD_H         = 85.0
 EDGE_WIDTH      = 0.05
 COPPER_CLEARANCE = 0.25
 HV_CLEARANCE    = 1.2
@@ -35,8 +35,16 @@ MOUNT_HOLES = [
 ]
 
 HV_KEEPOUTS = [
-    (0.0, 25.0, 36.0, 40.0),   # bottom zone: power + XLR + transformer pads
+    (0.0, 21.0, 32.0, 41.0),   # bottom zone: power + XLR + transformer pads
 ]
+
+# Transformer bobbin cutout — bobbin passes through; metal core sits as flange on PCB
+# Measure the physical NTE10/3 bobbin before finalising these values.
+# Full body: 11.5 × 12.9 × 11.5 mm; bobbin is the wound plastic section (smaller).
+TX_BOBBIN_W = 10.0   # cutout width  (X) mm — adjust after measuring
+TX_BOBBIN_H = 8.0    # cutout height (Y) mm — adjust after measuring
+TX_CUTOUT_X = 100.0  # cutout centre X (canvas absolute mm)
+TX_CUTOUT_Y = 127.0  # cutout centre Y (canvas absolute mm)
 
 
 def uid() -> str:
@@ -111,12 +119,37 @@ def mount_hole_sexpr(x, y, diam):
   )"""
 
 
+def tx_cutout_sexpr() -> str:
+    """Interior rectangular Edge.Cuts cutout for the NTE10/3 bobbin.
+    The metal core (larger than the bobbin) acts as a retaining flange on the PCB surface.
+    """
+    x0 = TX_CUTOUT_X - TX_BOBBIN_W / 2
+    x1 = TX_CUTOUT_X + TX_BOBBIN_W / 2
+    y0 = TX_CUTOUT_Y - TX_BOBBIN_H / 2
+    y1 = TX_CUTOUT_Y + TX_BOBBIN_H / 2
+    corners = [(x0, y0), (x1, y0), (x1, y1), (x0, y1)]
+    lines = []
+    for i in range(4):
+        ax, ay = corners[i]
+        bx, by = corners[(i + 1) % 4]
+        lines.append(f"""\
+  (gr_line
+    (start {xy(ax, ay)})
+    (end {xy(bx, by)})
+    (layer "Edge.Cuts")
+    (width {EDGE_WIDTH})
+    (uuid "{uid()}")
+  )""")
+    return "\n".join(lines)
+
+
 def generate_board() -> str:
     cx, cy = BOARD_CENTER_X, BOARD_CENTER_Y
     outline  = rect_outline_sexpr(cx, cy, BOARD_W, BOARD_H)
     holes    = "\n".join(mount_hole_sexpr(x, y, MOUNT_HOLE_DIAM) for x, y in MOUNT_HOLES)
     keepouts = "\n".join(keepout_zone_sexpr(kx, ky, kw, kh, cx, cy)
                          for kx, ky, kw, kh in HV_KEEPOUTS)
+    cutout   = tx_cutout_sexpr()
 
     return f"""\
 (kicad_pcb
@@ -174,6 +207,8 @@ def generate_board() -> str:
 {outline}
 
 {holes}
+
+{cutout}
 
 {keepouts}
 

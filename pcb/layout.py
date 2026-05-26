@@ -2,16 +2,16 @@
 =========================================================================
 Generates pcb/op-txm.kicad_pcb from the parametric outline.
 
-Board: 40 mm (W) × 100 mm (L)  — standard large-body mic form factor
-Canvas centre: (100, 100) mm    — board spans X=[80,120], Y=[50,150]
+Board: 35 mm (W) × 85 mm (L)  — compact mic form factor
+Canvas centre: (100, 100) mm    — board spans X=[82.5,117.5], Y=[57.5,142.5]
 
 Signal flow (Y-axis, top → bottom):
-  Top zone    Y=[52,68]   Capsule TH pads + JFET input (quiet end)
-  GAP         Y=[68,78]   10 mm noise isolation buffer
-  Middle zone Y=[78,118]  OPA1642 EQ + DC servo + decoupling
-  GAP         Y=[118,123]  5 mm HV isolation buffer
-  Bottom zone Y=[123,148] Power (LR8, TPS7A3901, charge pump)
-                           + transformer TH pads + XLR TH pads
+  Input zone  Y=[60,72]   Capsule TH pads + JFET input (quiet end)
+  GAP         Y=[72,74]   Noise isolation buffer
+  Audio zone  Y=[74,93]   OPA1642 EQ + DC servo + decoupling
+  GAP         Y=[93,100]  HV isolation buffer
+  Power zone  Y=[100,122] Power (LR8, TPS7A3901, charge pump)
+  TX area     Y=[122,135] Transformer TH pads + XLR pads + bobbin cutout
 
 Usage
 -----
@@ -40,25 +40,25 @@ from kiutils.items.common import Effects, Font, Justify
 # Board geometry
 # ---------------------------------------------------------------------------
 CX, CY   = 100.0, 100.0
-BOARD_W  = 40.0
-BOARD_H  = 100.0
+BOARD_W  = 35.0
+BOARD_H  = 85.0
 
-BOUNDS_MIN_X = CX - BOARD_W / 2   # 80.0
-BOUNDS_MAX_X = CX + BOARD_W / 2   # 120.0
-BOUNDS_MIN_Y = CY - BOARD_H / 2   # 50.0
-BOUNDS_MAX_Y = CY + BOARD_H / 2   # 150.0
+BOUNDS_MIN_X = CX - BOARD_W / 2   # 82.5
+BOUNDS_MAX_X = CX + BOARD_W / 2   # 117.5
+BOUNDS_MIN_Y = CY - BOARD_H / 2   # 57.5
+BOUNDS_MAX_Y = CY + BOARD_H / 2   # 142.5
 
-SAFE_MARGIN = 6.0
+SAFE_MARGIN = 3.5
 SAFE_MIN_X  = BOUNDS_MIN_X + SAFE_MARGIN   # 86.0
 SAFE_MAX_X  = BOUNDS_MAX_X - SAFE_MARGIN   # 114.0
-SAFE_MIN_Y  = BOUNDS_MIN_Y + 2.0           # 52.0
-SAFE_MAX_Y  = BOUNDS_MAX_Y - 2.0           # 148.0
+SAFE_MIN_Y  = BOUNDS_MIN_Y + 2.0           # 59.5
+SAFE_MAX_Y  = BOUNDS_MAX_Y - 2.0           # 140.5
 
-ZONE_INPUT  = (86.0,  52.0, 114.0,  68.0)
-ZONE_AUDIO  = (86.0,  78.0, 114.0, 118.0)
-ZONE_POWER  = (86.0, 123.0, 114.0, 148.0)
+ZONE_INPUT  = (86.0,  60.0, 114.0,  72.0)
+ZONE_AUDIO  = (86.0,  74.0, 114.0,  93.0)
+ZONE_POWER  = (86.0, 100.0, 114.0, 122.0)
 
-FIDUCIAL_POS = [(85.0, 55.0), (115.0, 55.0), (113.0, 121.0)]
+FIDUCIAL_POS = [(87.0, 62.0), (113.0, 62.0), (113.0, 103.0)]
 
 MHOLE_POS = [
     ( 85.0,  60.0),   # top-left
@@ -441,42 +441,42 @@ def build_layout():
         components.append(fiducial(f"FID{i}", fx, fy))
 
     # ══════════════════════════════════════════════════════════════════════
-    # TOP ZONE  Y=[52,68]  — Capsule interface + JFET
+    # INPUT ZONE  Y=[60,72]  — Capsule interface + JFET
     # ══════════════════════════════════════════════════════════════════════
 
-    # Capsule pads (Y≈56, PCB head)
+    # Capsule pads (Y≈62, PCB head — same Y as top mounting holes, different X)
     # FP: front-plate signal → VGATE via C_IN
     # BP: back-plate bias (V_BOOST via R_GBIAS — sets capsule polarisation)
-    components.append(capsule_pad("FP",         "FP_CAPSULE",  93.0, 56.0))
-    components.append(capsule_pad("BP",         "BP_CAPSULE", 100.0, 56.0))
-    components.append(capsule_pad("GND_SHIELD", "GND",        107.0, 56.0))
+    components.append(capsule_pad("FP",         "FP_CAPSULE",  93.0, 62.0))
+    components.append(capsule_pad("BP",         "BP_CAPSULE", 100.0, 62.0))
+    components.append(capsule_pad("GND_SHIELD", "GND",        107.0, 62.0))
 
     # Q1: MMBF170LT1G SOT-23 (pin1=S, pin2=G, pin3=D in SOT-23 pinout)
     # MMBF170 SOT-23 pinout: 1=Gate, 2=Source, 3=Drain (check datasheet!)
-    # Placed Y=63 — just below capsule pads
+    # Placed Y=66 — below capsule pads
     components.append(sot23("Q1", "MMBF170LT1G",
                              "VGATE", "VSOURCE", "VDRAIN",
-                             100.0, 63.0))
+                             100.0, 66.0))
 
     # R_GBIAS: 10 MΩ 0805 — BP_CAPSULE → VGATE (sets capsule polarisation bias)
     # Large body for high-voltage handling; isolate from signal traces
     components.append(r0805("R_GBIAS", "10M",
-                             "BP_CAPSULE", "VGATE", 93.0, 63.0))
+                             "BP_CAPSULE", "VGATE", 93.0, 65.0))
 
     # C_IN: 10 nF 0402 — FP_CAPSULE → VGATE coupling cap (AC, blocks capsule DC)
     components.append(r0402("C_IN", "10n",
-                             "FP_CAPSULE", "VGATE", 93.0, 67.0))
+                             "FP_CAPSULE", "VGATE", 93.0, 69.0))
 
     # R_D: 22 kΩ 0402 — VDRAIN → V_BOOST (drain load resistor)
     components.append(r0402("R_D", "22k",
-                             "VDRAIN", "V_BOOST", 107.0, 63.0))
+                             "VDRAIN", "V_BOOST", 107.0, 65.0))
 
     # R_S: 1 kΩ 0402 — VSOURCE → GND (source degeneration for servo lock)
     components.append(r0402("R_S", "1k",
-                             "VSOURCE", "GND", 107.0, 67.0))
+                             "VSOURCE", "GND", 107.0, 69.0))
 
     # ══════════════════════════════════════════════════════════════════════
-    # MIDDLE ZONE  Y=[78,118]  — OPA1642 EQ + DC Servo
+    # AUDIO ZONE  Y=[74,93]  — OPA1642 EQ + DC Servo
     # ══════════════════════════════════════════════════════════════════════
 
     # U1: OPA1642AIDR SOIC-8
@@ -494,76 +494,67 @@ def build_layout():
         "SRV_OUT",   # pin7: OUT_B (servo output → gate injection)
         "P15V",      # pin8: V+
     ]
-    components.append(soic8("U1", "OPA1642AIDR", opa_nets, 100.0, 90.0))
+    components.append(soic8("U1", "OPA1642AIDR", opa_nets, 100.0, 81.0))
 
     # EQ components (Section A) — cluster around U1 left side
     # R_IN: 10 kΩ — VSOURCE → IN-_A  (input summing resistor)
     components.append(r0402("R_IN", "10k",
-                             "VSOURCE", "SIG_EQ", 91.0, 87.5))
+                             "VSOURCE", "SIG_EQ", 91.0, 77.5))
 
     # R_F: 47 kΩ — OUT_A → IN-_A  (feedback; K47 mode)
     components.append(r0402("R_F", "47k",
-                             "SIG_EQ", "SIG_EQ", 91.0, 90.0))
+                             "SIG_EQ", "SIG_EQ", 91.0, 80.0))
 
     # R_SHELF: 47 kΩ — in series with C_DEEMPH across R_F (K87 de-emphasis)
     components.append(r0402("R_SHELF", "47k",
-                             "SIG_EQ", "SIG_EQ", 91.0, 92.5))
+                             "SIG_EQ", "SIG_EQ", 91.0, 82.5))
 
     # C_DEEMPH: 150 pF — de-emphasis shelf cap
     components.append(r0402("C_DEEMPH", "150p",
-                             "SIG_EQ", "SIG_EQ", 91.0, 95.0))
+                             "SIG_EQ", "SIG_EQ", 91.0, 85.0))
 
     # SJ1: solder bridge — K47 (open) / K87 (closed) mode select
     # Bridges C_DEEMPH to R_SHELF junction — just a 0402 0Ω position
     components.append(r0402("SJ1", "SJ_K87",
-                             "SIG_EQ", "SIG_EQ", 91.0, 97.5))
+                             "SIG_EQ", "SIG_EQ", 91.0, 87.5))
 
     # DC Servo components (Section B) — cluster around U1 right side
     # R_INJ: 1 MΩ — SRV_OUT → VGATE (low-pass injection into gate)
     components.append(r0402("R_INJ", "1M",
-                             "SRV_OUT", "VGATE", 109.0, 87.5))
+                             "SRV_OUT", "VGATE", 109.0, 77.5))
 
     # R_INT: 300 kΩ — VSOURCE → IN-_B (servo integrator input)
     components.append(r0402("R_INT", "300k",
-                             "VSOURCE", "SRV_INT", 109.0, 90.0))
+                             "VSOURCE", "SRV_INT", 109.0, 80.0))
 
     # C_INT: 10 µF 0603 — IN-_B → OUT_B (integrator cap, sets f_c ≈ 0.05 Hz)
     components.append(r0603("C_INT", "10u",
-                             "SRV_INT", "SRV_OUT", 109.0, 93.0))
+                             "SRV_INT", "SRV_OUT", 109.0, 83.0))
 
     # Decoupling caps for ±15V supply (near U1) — 4 mm spacing so courtyards clear
-    components.append(r0402("C_P15_100n", "100n", "P15V", "GND",  96.0, 83.0))
-    components.append(r0603("C_P15_1u",   "1u",   "P15V", "GND", 100.0, 83.0))
-    components.append(r0402("C_N15_100n", "100n", "N15V", "GND", 104.0, 83.0))
-    components.append(r0603("C_N15_1u",   "1u",   "N15V", "GND", 108.0, 83.0))
+    components.append(r0402("C_P15_100n", "100n", "P15V", "GND",  96.0, 73.0))
+    components.append(r0603("C_P15_1u",   "1u",   "P15V", "GND", 100.0, 73.0))
+    components.append(r0402("C_N15_100n", "100n", "N15V", "GND", 104.0, 73.0))
+    components.append(r0603("C_N15_1u",   "1u",   "N15V", "GND", 108.0, 73.0))
 
     # ══════════════════════════════════════════════════════════════════════
-    # BOTTOM ZONE  Y=[123,148]  — Power + Transformer + XLR
+    # POWER ZONE  Y=[100,122]  — LR8 pre-reg + TPS7A3901 ±15V + charge pump
     # ══════════════════════════════════════════════════════════════════════
 
     # U2: LR8 SOT-89  — 48V PHANTOM → 35.2V (P48V_LDO)
-    # LR8 pinout (SOT-89): 1=ADJ, 2=OUT, 3=IN, tab=IN
     components.append(sot89("U2", "LR8",
                              "LR8_ADJ", "P48V_LDO", "PHANTOM", "PHANTOM",
-                             91.0, 130.0))
+                             91.0, 110.5))
 
-    # LR8 programming resistors — placed left of U2 (U2 courtyard ±2.5 mm,
-    # 4 mm X-offset gives 4−3.8 = 0.2 mm courtyard gap, within safe area)
-    components.append(r0402("R_LR8_1", "270k",
-                             "P48V_LDO", "LR8_ADJ", 87.0, 127.0))
-    components.append(r0402("R_LR8_2", "10k",
-                             "LR8_ADJ", "GND", 87.0, 130.0))
+    # LR8 programming resistors — left of U2
+    components.append(r0402("R_LR8_1", "270k", "P48V_LDO", "LR8_ADJ", 87.0, 107.5))
+    components.append(r0402("R_LR8_2", "10k",  "LR8_ADJ",  "GND",     87.0, 110.5))
 
-    # LR8 decoupling — input cap above U2, output cap to the right
-    components.append(r0603("C_LR8_IN",  "10u/100V", "PHANTOM",  "GND", 91.0, 125.0))
-    components.append(r0603("C_LR8_OUT", "4u7",      "P48V_LDO", "GND", 96.0, 130.0))
+    # LR8 decoupling
+    components.append(r0603("C_LR8_IN",  "10u/100V", "PHANTOM",  "GND", 91.0, 106.5))
+    components.append(r0603("C_LR8_OUT", "4u7",      "P48V_LDO", "GND", 96.0, 110.5))
 
     # U3: TPS7A3901 WSON-12 3×3 mm — ±15V dual LDO from 35.2V
-    # TPS7A3901 pinout (WSON-12, 12 pins + EP):
-    #   Pins 1-6 (left):  IN, IN, FB-, OUT-, FB-, IN
-    #   Pins 7-12 (right): IN, FB+, OUT+, FB+, IN, IN
-    #   EP: GND
-    # Simplified net assignment:
     tps_nets = [
         "P48V_LDO",  # 1: IN
         "P48V_LDO",  # 2: IN
@@ -579,57 +570,58 @@ def build_layout():
         "P48V_LDO",  # 12: IN
         "GND",       # EP
     ]
-    components.append(wson12("U3", "TPS7A3901", tps_nets, 100.0, 130.0))
+    components.append(wson12("U3", "TPS7A3901", tps_nets, 100.0, 110.0))
 
-    # TPS7A3901 programming resistors — placed right of U3 (U3 courtyard ±2.0 mm,
-    # 4 mm X-offset gives 4−3.3 = 0.7 mm courtyard gap)
-    components.append(r0402("R_TPS_P1", "127k", "P15V",       "TPS_FB_POS", 104.0, 126.0))
-    components.append(r0402("R_TPS_P2", "10k",  "TPS_FB_POS", "GND",        107.0, 126.0))
-    components.append(r0402("R_TPS_N1", "127k", "N15V",       "TPS_FB_NEG", 104.0, 129.0))
-    components.append(r0402("R_TPS_N2", "10k",  "TPS_FB_NEG", "GND",        107.0, 129.0))
+    # TPS7A3901 programming resistors — right of U3
+    components.append(r0402("R_TPS_P1", "127k", "P15V",       "TPS_FB_POS", 104.0, 107.0))
+    components.append(r0402("R_TPS_P2", "10k",  "TPS_FB_POS", "GND",        107.0, 107.0))
+    components.append(r0402("R_TPS_N1", "127k", "N15V",       "TPS_FB_NEG", 104.0, 110.0))
+    components.append(r0402("R_TPS_N2", "10k",  "TPS_FB_NEG", "GND",        107.0, 110.0))
 
-    # TPS7A3901 output decoupling — 4 mm X-spacing so 0603 courtyards clear
-    components.append(r0603("C_P15_OUT", "10u", "P15V", "GND", 104.0, 133.0))
-    components.append(r0603("C_N15_OUT", "10u", "N15V", "GND", 108.0, 133.0))
+    # TPS7A3901 output decoupling
+    components.append(r0603("C_P15_OUT", "10u", "P15V", "GND", 104.0, 114.0))
+    components.append(r0603("C_N15_OUT", "10u", "N15V", "GND", 108.0, 114.0))
 
     # Charge pump — 1-stage Cockcroft-Walton 48V → 72V (V_BOOST)
-    # D1: BAT54S (SOT-23, series dual Schottky) — anode pair = pin3, cathode = pin1+pin2
-    # We treat it as two diodes in series using the dual package
     components.append(sot23("D1", "BAT54S",
                              "PHANTOM", "V_BOOST", "GND",
-                             91.0, 138.0))
+                             91.0, 117.0))
+    components.append(r0402("C_PUMP", "100n/100V", "PHANTOM", "V_BOOST", 91.0, 120.0))
+    components.append(r0603("C_RSVR", "4u7/100V",  "V_BOOST", "GND",     95.0, 117.0))
+    components.append(r0805("L1",     "10mH",       "V_BOOST", "V_BOOST", 100.0, 117.0))
+    components.append(r0603("C_LPF",  "10u",        "V_BOOST", "GND",     105.0, 117.0))
 
-    # C_PUMP: 100 nF 0402 — pump capacitor (PHANTOM → V_BOOST)
-    components.append(r0402("C_PUMP", "100n/100V", "PHANTOM", "V_BOOST", 91.0, 141.0))
+    # ══════════════════════════════════════════════════════════════════════
+    # TRANSFORMER AREA  Y=[122,135]
+    # Cutout X=[95,105] Y=[123,131] (10×8 mm, centre (100,127))
+    # Secondary column LEFT (X=88, 3 mm pitch): TX_S3H / TX_S3R / TX_S3C
+    # Primary + XLR columns RIGHT (X=109/112, 3 mm pitch)
+    # NPTH cable-tie slots at X=92 and X=109, Y=133
+    # ══════════════════════════════════════════════════════════════════════
 
-    # Charge pump output — space at 4 mm so SOT-23 + 0603 + 0805 courtyards clear
-    # D1 right edge: 91+1.5=92.5; C_RSVR left edge: 95−1.8=93.2 → gap 0.7 mm
-    # C_RSVR right: 95+1.8=96.8; L1 left: 100−2.2=97.8 → gap 1.0 mm
-    # L1 right: 100+2.2=102.2; C_LPF left: 105−1.8=103.2 → gap 1.0 mm
-    components.append(r0603("C_RSVR", "4u7/100V", "V_BOOST", "GND",  95.0, 138.0))
-    components.append(r0805("L1",    "10mH",  "V_BOOST", "V_BOOST", 100.0, 138.0))
-    components.append(r0603("C_LPF", "10u",   "V_BOOST", "GND",     105.0, 138.0))
+    # 3× secondary winding (op-amp drives these):
+    # X=88 is ≥11 mm from bottom mounting hole at (85,140) — well clear of DRC
+    components.append(th_pad("TX_S3H", "TX_DRV_HOT", 88.0, 123.0))  # Blue
+    components.append(th_pad("TX_S3R", "TX_DRV_RTN", 88.0, 126.0))  # White
+    components.append(th_pad("TX_S3C", "GND",         88.0, 129.0))  # Yellow CT → GND
 
-    # ── Transformer TH pads (op-txm reversed 3:1 connection) ────────────
-    # 3× secondary (driven by op-amp EQ output):
-    components.append(th_pad("TX_S3H", "TX_DRV_HOT", 87.0, 144.0))  # Blue
-    components.append(th_pad("TX_S3R", "TX_DRV_RTN", 90.0, 144.0))  # White
-    components.append(th_pad("TX_S3C", "GND",         93.0, 144.0))  # Yellow (CT → GND)
-    # 1× primary (XLR balanced output):
-    components.append(th_pad("TX_P1",  "XLR_HOT",    96.0, 144.0))  # Red → XLR pin2
-    components.append(th_pad("TX_P2",  "XLR_COLD",   99.0, 144.0))  # Black → XLR pin3
+    # 1× primary winding (XLR output):
+    components.append(th_pad("TX_P1",  "XLR_HOT",  109.0, 123.0))   # Red
+    components.append(th_pad("TX_P2",  "XLR_COLD", 109.0, 126.0))   # Black
 
-    # ── NPTH zip-tie slots (transformer body retention) ──────────────────
-    components.append(npth_slot("SLOT1",  86.0, 148.0))
-    components.append(npth_slot("SLOT2", 114.0, 148.0))
+    # XLR cable pads — X=112 is ≥11 mm from bottom mounting hole at (115,140)
+    components.append(th_pad("XLR1", "GND",      112.0, 123.0))  # pin 1 — shield
+    components.append(th_pad("XLR2", "XLR_HOT",  112.0, 126.0))  # pin 2 — hot
+    components.append(th_pad("XLR3", "XLR_COLD", 112.0, 129.0))  # pin 3 — cold
 
-    # ── XLR cable solder pads ────────────────────────────────────────────
-    components.append(th_pad("XLR1", "GND",      106.0, 144.0))  # pin 1 — shield/GND
-    components.append(th_pad("XLR2", "XLR_HOT",  110.0, 144.0))  # pin 2 — hot
-    components.append(th_pad("XLR3", "XLR_COLD", 114.0, 144.0))  # pin 3 — cold
+    # Cable-tie NPTH slots — Y=133 clears all TH pad rings and mounting holes
+    # SLOT1(92,133): ≥5.66 mm from TX_S3C(88,129), ≥9.9 mm from MH(85,140)
+    # SLOT2(109,133): ≥5.00 mm from XLR3(112,129), ≥9.2 mm from MH(115,140)
+    components.append(npth_slot("SLOT1",  92.0, 133.0))
+    components.append(npth_slot("SLOT2", 109.0, 133.0))
 
     # ── GND stitching vias ───────────────────────────────────────────────
-    for vy in [72.0, 98.0, 121.0]:
+    for vy in [71.0, 93.0, 121.0]:
         for vx in [88.0, 100.0, 112.0]:
             vias.append(_gnd_via(vx, vy))
 
@@ -689,6 +681,15 @@ def render_preview(out_png: Path):
         ax.add_patch(plt.Circle((mx, my), 1.1,
                                 fill=False, edgecolor="gray",
                                 linewidth=1.5, linestyle="--", zorder=6))
+
+    # Transformer bobbin cutout (10 × 8 mm, centre at X=100 Y=127)
+    _tx_w, _tx_h = 10.0, 8.0
+    ax.add_patch(mpatches.Rectangle(
+        (CX - _tx_w / 2, 127.0 - _tx_h / 2), _tx_w, _tx_h,
+        facecolor="white", edgecolor="red", linewidth=1.5,
+        linestyle="--", zorder=7))
+    ax.text(CX, 127.0, "TX\ncutout", ha="center", va="center",
+            fontsize=6, color="red")
 
     ax.text(CX, BOUNDS_MIN_Y - 1.5, "▲ CAPSULE", ha="center",
             fontsize=8, color="teal", fontweight="bold")
