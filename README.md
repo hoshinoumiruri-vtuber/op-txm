@@ -265,18 +265,19 @@ After opening in KiCad:
 
 - [x] Add kiutils to pyproject.toml, scaffold pcb/layout.py
 - [x] Generate .kicad_pro (pcb/project.py) with HV net class and DRC rules
-- [x] Define board outline: 40×100 mm, 4× M2.2 NPTH (30×80 mm pattern) — pcb/outline.py
+- [x] Define board outline: 35×85 mm, 4× M2.2 NPTH (30×80 mm pattern) — pcb/outline.py
 - [x] Place components via script: power stage, JFET buffer, EQ, transformer TH pads
 - [x] Define HV keepout zone (outline.py), B.Cu GND plane (layout.py)
-- [x] Add NPTH zip-tie slots (2.5 mm) at PCB edge
+- [x] Add NPTH zip-tie slots (2.5 mm) at PCB edge for transformer retention
+- [x] Transformer bobbin cutout (10×8 mm interior rectangle, Edge.Cuts)
 - [ ] Route critical nets (capsule signal, HV supply, EQ output) — interactive in KiCad
 - [ ] DRC — zero clearance violations
 - [ ] Fill All Zones, export Gerbers
 
 ### Phase 3: BOM + Procurement
 
-- [ ] Generate BOM (bom/generate_bom.py)
-- [ ] DFM review for Taiwan PCBA
+- [x] Generate BOM (bom/generate_bom.py) — 31 line items, 35 SMD placements
+- [x] DFM review (bom/txm_bom_dfm.txt) — board parameters, TH hand-solder notes
 - [ ] Order NTE10/3 (check stock: Farnell, Mouser)
 - [ ] Order long-lead parts: IXYS LR8, TPS7A3901
 
