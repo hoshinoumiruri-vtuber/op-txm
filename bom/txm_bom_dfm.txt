@@ -1,8 +1,8 @@
 op-txm — DFM Review
 ================================================================
 
-  Total BOM line items : 31
-  SMD placements       : 35
+  Total BOM line items : 32
+  SMD placements       : 36
   Off-board (hand TH)  : 1
   DNP                  : 0
 

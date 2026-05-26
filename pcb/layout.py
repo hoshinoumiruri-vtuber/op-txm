@@ -475,6 +475,12 @@ def build_layout():
     components.append(r0402("R_S", "1k",
                              "VSOURCE", "GND", 107.0, 69.0))
 
+    # D_RS: HSMS-2820 SOT-23 Schottky — anode=GND, cathode=VSOURCE
+    # Clamps across R_S to protect JFET gate-source during power transients
+    components.append(sot23("D_RS", "HSMS-2820",
+                             "GND", "GND", "VSOURCE",
+                             111.0, 67.0))
+
     # ══════════════════════════════════════════════════════════════════════
     # AUDIO ZONE  Y=[74,93]  — OPA1642 EQ + DC Servo
     # ══════════════════════════════════════════════════════════════════════
@@ -624,6 +630,47 @@ def build_layout():
     for vy in [71.0, 93.0, 121.0]:
         for vx in [88.0, 100.0, 112.0]:
             vias.append(_gnd_via(vx, vy))
+
+    # ══════════════════════════════════════════════════════════════════════
+    # INPUT ZONE ROUTING — local connections in the JFET cluster
+    # Pad absolute positions (footprint-centre + local pad offset):
+    #   Q1(100,66) SOT-23: gate=(99.05,67.30) src=(100.95,67.30) drn=(100.00,64.70)
+    #   R_GBIAS(93,65) 0805: p1-BP=(91.90,65.0) p2-VGATE=(94.10,65.0)
+    #   C_IN(93,69) 0402:   p1-FP=(92.425,69.0) p2-VGATE=(93.575,69.0)
+    #   R_D(107,65) 0402:   p1-VDRAIN=(106.425,65.0)
+    #   R_S(107,69) 0402:   p1-VSOURCE=(106.425,69.0) p2-GND=(107.575,69.0)
+    #   D_RS(111,67) SOT-23: p1-GND=(110.05,68.30) p3-VSOURCE=(111.00,65.70)
+    # ══════════════════════════════════════════════════════════════════════
+
+    # VDRAIN (HV net, W_HV=0.40mm): Q1 drain → R_D pad1
+    segments.extend([
+        _seg(100.00, 64.70, 106.425, 64.70, "VDRAIN", W_HV),
+        _seg(106.425, 64.70, 106.425, 65.00, "VDRAIN", W_HV),
+    ])
+
+    # VSOURCE: Q1 source → R_S pad1 and D_RS cathode (T-node at X=106.425 Y=67.30)
+    segments.extend([
+        _seg(100.95, 67.30, 106.425, 67.30, "VSOURCE"),
+        _seg(106.425, 67.30, 106.425, 69.00, "VSOURCE"),  # → R_S pad1
+        _seg(106.425, 67.30, 111.00,  67.30, "VSOURCE"),  # continue right
+        _seg(111.00,  67.30, 111.00,  65.70, "VSOURCE"),  # → D_RS cathode
+    ])
+
+    # VGATE (high-Z, W_HIMP=0.15mm): R_GBIAS pad2 and C_IN pad2 → Q1 gate
+    segments.extend([
+        _seg(94.10,  65.00, 94.10,  67.30, "VGATE", W_HIMP),  # R_GBIAS pad2 down
+        _seg(94.10,  67.30, 99.05,  67.30, "VGATE", W_HIMP),  # → Q1 gate
+        _seg(93.575, 69.00, 93.575, 67.30, "VGATE", W_HIMP),  # C_IN pad2 up
+        _seg(93.575, 67.30, 94.10,  67.30, "VGATE", W_HIMP),  # → join node
+    ])
+
+    # GND bus at X=112 (W_POWER): GND_SHIELD pad, D_RS anode, R_S pad2 → GND via(112,71)
+    segments.extend([
+        _seg(112.00,  62.00, 112.00, 71.00, "GND", W_POWER),  # vertical bus
+        _seg(107.00,  62.00, 112.00, 62.00, "GND", W_POWER),  # GND_SHIELD tap
+        _seg(110.05,  68.30, 112.00, 68.30, "GND", W_POWER),  # D_RS anode tap
+        _seg(107.575, 69.00, 112.00, 69.00, "GND", W_POWER),  # R_S pad2 tap
+    ])
 
     # ── Commit to board ──────────────────────────────────────────────────
     b.footprints.extend(components)

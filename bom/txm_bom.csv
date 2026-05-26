@@ -2,6 +2,7 @@ Refs,Qty,Value,Description,Package,Manufacturer,MPN,DNP,Notes
 Q1,1,MMBF170LT1G,"N-JFET, Idss 2–6 mA, SOT-23, capsule buffer",SOT-23,onsemi,MMBF170LT1G,,
 R_D,1,22k 1%,JFET drain load (VDRAIN → V_BOOST),0402,Yageo,RC0402FR-0722KL,,
 R_S,1,1k 1%,JFET source degeneration,0402,Yageo,RC0402FR-071KL,,
+D_RS,1,HSMS-2820,"Schottky clamp across R_S — anode=GND cathode=VSOURCE, protects JFET during transients",SOT-23,Broadcom,HSMS-2820-TR1G,,
 R_GBIAS,1,10M 1%,Gate bias — 200 V rated 0805 required (VGATE = V_BOOST via R_GBIAS),0805,Vishay,CRCW080510M0FKEA,,HV net (VGATE ≈ 72 V). Must be 200 V rated.
 C_IN,1,10n 50V X7R,Input coupling cap FP_CAPSULE → VGATE,0402,Murata,GRM155R71H103KA88D,,
 U1,1,OPA1642AIDR,"Dual JFET op-amp, SOIC-8, GBW=11 MHz, EIN=5.1 nV/√Hz",SOIC-8,Texas Instruments,OPA1642AIDR,,Section A = EQ inverting amp. Section B = DC servo integrator.
