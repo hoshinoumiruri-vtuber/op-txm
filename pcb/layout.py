@@ -768,11 +768,29 @@ def build_layout():
         # Right p12 + p11 — drop from trunk
         _seg(101.65, 105.0,  101.65, 108.75, "P48V_LDO", W_POWER),
         _seg(101.65, 108.75, 101.65, 109.25, "P48V_LDO", W_POWER),
-        # East drop then west trunk: p6 and p7 from below
-        _seg(102.0,  105.0,  102.0,  112.0,  "P48V_LDO", W_POWER),
-        _seg(102.0,  112.0,   98.35, 112.0,  "P48V_LDO", W_POWER),
+        # East drop then west trunk: p6 and p7 from below (shifted to X=102.5)
+        _seg(102.5,  105.0,  102.5,  112.0,  "P48V_LDO", W_POWER),
+        _seg(102.5,  112.0,   98.35, 112.0,  "P48V_LDO", W_POWER),
         _seg( 98.35, 112.0,   98.35, 111.25, "P48V_LDO", W_POWER),
         _seg(101.65, 112.0,  101.65, 111.25, "P48V_LDO", W_POWER),
+    ])
+
+    # ── Task G2: TPS7A3901 — P15V and N15V outputs ───────────────────────
+    # p9(101.65,110.25)=P15V → R_TPS_P1 pad1(103.425,107)
+    # p4(98.35,110.25)=N15V  → R_TPS_N1 pad1(103.425,110)
+    segments.extend([
+        # P15V: west clear of EP (right edge X=100.85), south below P48V_LDO bottom trunk,
+        #       east past G1 vertical, north to R_TPS_P1
+        _seg(101.65, 110.25, 101.1,  110.25, "P15V", W_POWER),
+        _seg(101.1,  110.25, 101.1,  113.0,  "P15V", W_POWER),
+        _seg(101.1,  113.0,  103.5,  113.0,  "P15V", W_POWER),
+        _seg(103.5,  113.0,  103.5,  107.0,  "P15V", W_POWER),
+        _seg(103.5,  107.0,  103.425, 107.0, "P15V", W_POWER),
+        # N15V: west, north above U3, east to R_TPS_N1
+        _seg( 98.35, 110.25,  97.0,  110.25, "N15V", W_POWER),
+        _seg( 97.0,  110.25,  97.0,  107.0,  "N15V", W_POWER),
+        _seg( 97.0,  107.0,  103.425, 107.0, "N15V", W_POWER),  # shared Y=107 corridor
+        _seg(103.425, 107.0, 103.425, 110.0, "N15V", W_POWER),
     ])
 
     # ── Commit to board ──────────────────────────────────────────────────
