@@ -841,6 +841,21 @@ def build_layout():
         _seg(109.575, 75.5,  109.575, 77.5,  "VGATE",   W_HIMP),
     ])
 
+    # ── Task E: U1 decoupling caps ───────────────────────────────────────
+    # C_P15_100n(96,73) 0402: p1=P15V(95.425,73)  C_P15_1u(100,73) 0603: p1=P15V(98.95,73)
+    # C_N15_100n(104,73) 0402: p1=N15V(103.425,73) C_N15_1u(108,73) 0603: p1=N15V(106.95,73)
+    # P15V bus at Y=73; N15V bus at Y=71 with stubs north to cap pads
+    segments.extend([
+        # P15V: extend trunk north to Y=73, bus west to C_P15_100n
+        _seg(103.5,  79.095, 103.5,  73.0,  "P15V", W_POWER),
+        _seg(103.5,  73.0,   95.425, 73.0,  "P15V", W_POWER),
+        # N15V: extend trunk north to Y=71, bus east, stubs to cap pads
+        _seg(97.0,   82.905, 97.0,   71.0,  "N15V", W_POWER),
+        _seg(97.0,   71.0,   106.95, 71.0,  "N15V", W_POWER),
+        _seg(103.425, 71.0,  103.425, 73.0, "N15V", W_POWER),
+        _seg(106.95,  71.0,  106.95,  73.0, "N15V", W_POWER),
+    ])
+
     # ── Task D: U1 power pins ────────────────────────────────────────────
     # pin8=P15V (102.7,79.095): extend P15V trunk (X=103.5) north then west
     # pin4=N15V (97.3,82.905):  extend N15V trunk (X=97.0) north then east
