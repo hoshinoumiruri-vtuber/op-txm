@@ -814,6 +814,36 @@ def build_layout():
                    (99.75, 110.25), (100.25, 110.25)]:
         vias.append(_gnd_via(vx, vy))
 
+    # ── Task B: Audio zone EQ (U1 section A) ─────────────────────────────
+    # U1 SOIC-8 at (100,81), PITCH=1.27, left pads X=97.3, right pads X=102.7
+    # pin1=OUT_A/SIG_EQ  (97.3, 79.095)
+    # pin2=IN-_A/SIG_EQ  (97.3, 80.365)
+    # EQ components at X=91: R_IN(77.5) R_F(80) R_SHELF(82.5) C_DEEMPH(85) SJ1(87.5)
+    # SIG_EQ trunk at X=93.5, Y=[77.5..87.5]; VSOURCE from Q1 src to R_IN p1
+    segments.extend([
+        # SIG_EQ vertical trunk
+        _seg(93.5, 77.5, 93.5, 87.5, "SIG_EQ", W_SIGNAL),
+        # U1 pin1 and pin2 → trunk
+        _seg(97.3, 79.095, 93.5, 79.095, "SIG_EQ", W_SIGNAL),
+        _seg(97.3, 80.365, 93.5, 80.365, "SIG_EQ", W_SIGNAL),
+        # R_IN p2 (91.575,77.5) → trunk
+        _seg(91.575, 77.5, 93.5, 77.5, "SIG_EQ", W_SIGNAL),
+        # R_F, R_SHELF, C_DEEMPH, SJ1 — right pad → trunk
+        _seg(91.575, 80.0, 93.5, 80.0, "SIG_EQ", W_SIGNAL),
+        _seg(91.575, 82.5, 93.5, 82.5, "SIG_EQ", W_SIGNAL),
+        _seg(91.575, 85.0, 93.5, 85.0, "SIG_EQ", W_SIGNAL),
+        _seg(91.575, 87.5, 93.5, 87.5, "SIG_EQ", W_SIGNAL),
+        # R_F, R_SHELF, C_DEEMPH, SJ1 — left pad also SIG_EQ → trunk
+        _seg(90.425, 80.0, 91.575, 80.0, "SIG_EQ", W_SIGNAL),
+        _seg(90.425, 82.5, 91.575, 82.5, "SIG_EQ", W_SIGNAL),
+        _seg(90.425, 85.0, 91.575, 85.0, "SIG_EQ", W_SIGNAL),
+        _seg(90.425, 87.5, 91.575, 87.5, "SIG_EQ", W_SIGNAL),
+        # VSOURCE: Q1 source (100.95,67.3) west then south to R_IN p1 (90.425,77.5)
+        _seg(100.95, 67.3, 90.0,  67.3, "VSOURCE", W_SIGNAL),
+        _seg(90.0,   67.3, 90.0,  77.5, "VSOURCE", W_SIGNAL),
+        _seg(90.0,   77.5, 90.425, 77.5, "VSOURCE", W_SIGNAL),
+    ])
+
     # ── Task I: HV rail trunks ────────────────────────────────────────────
     # V_BOOST: R_D stub end (108.8,71) south to charge pump rail (108.8,117)
     # then west to C_LPF p1 (103.95,117) to close the ring
