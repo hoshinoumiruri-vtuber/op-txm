@@ -672,6 +672,89 @@ def build_layout():
         _seg(107.575, 69.00, 112.00, 69.00, "GND", W_POWER),  # R_S pad2 tap
     ])
 
+    # ── Task A: Input zone — HV feeds ────────────────────────────────────
+
+    # BP_CAPSULE (HV 0.40 mm): BP capsule pad (100,62) → R_GBIAS pad1 (91.9,65)
+    # Jog right to X=96 so horizontal at Y=66.5 stays >0.5 mm below VGATE pad2 (94.1,65).
+    segments.extend([
+        _seg(100.0, 62.0,  96.0, 62.0,  "BP_CAPSULE", W_HV),
+        _seg( 96.0, 62.0,  96.0, 66.5,  "BP_CAPSULE", W_HV),
+        _seg( 96.0, 66.5,  91.9, 66.5,  "BP_CAPSULE", W_HV),
+        _seg( 91.9, 66.5,  91.9, 65.0,  "BP_CAPSULE", W_HV),  # up → R_GBIAS pad1
+    ])
+
+    # FP_CAPSULE (hi-Z 0.15 mm): FP capsule pad (93,62) → C_IN pad1 (92.425,69)
+    # Step left to X=90.5 before going south so trace stays >0.5 mm from BP_CAPSULE
+    # copper at R_GBIAS pad1 (91.9,65); Y=63.5 clears R_GBIAS courtyard top (63.8).
+    segments.extend([
+        _seg( 93.0, 62.0,  93.0,   63.5,  "FP_CAPSULE", W_HIMP),
+        _seg( 93.0, 63.5,  90.5,   63.5,  "FP_CAPSULE", W_HIMP),
+        _seg( 90.5, 63.5,  90.5,   69.0,  "FP_CAPSULE", W_HIMP),
+        _seg( 90.5, 69.0,  92.425, 69.0,  "FP_CAPSULE", W_HIMP),  # → C_IN pad1
+    ])
+
+    # V_BOOST (HV 0.40 mm): R_D pad2 (107.575,65) stub south to zone boundary
+    # Jog to X=108.8 so HV trace edge clears R_S GND pad2 (107.575,69) by >0.5 mm.
+    segments.extend([
+        _seg(107.575, 65.0, 108.8, 65.0, "V_BOOST", W_HV),
+        _seg(  108.8, 65.0, 108.8, 71.0, "V_BOOST", W_HV),
+    ])
+
+    # ── Task F: Power zone — PHANTOM + LR8 ──────────────────────────────
+    # Pad positions:
+    #   C_LR8_IN(91,106.5) 0603: p1-PHANTOM=(89.95,106.5) p2-GND=(92.05,106.5)
+    #   U2-LR8(91,110.5) SOT-89: pin1-LR8_ADJ=(89.5,112.5) pin2-P48V_LDO=(91,112.5)
+    #                             pin3-PHANTOM=(92.5,112.5) tab-PHANTOM=(91,108.5)
+    #   R_LR8_1(87,107.5) 0402:  p1-P48V_LDO=(86.425,107.5) p2-LR8_ADJ=(87.575,107.5)
+    #   R_LR8_2(87,110.5) 0402:  p1-LR8_ADJ=(86.425,110.5) p2-GND=(87.575,110.5)
+    #   C_LR8_OUT(96,110.5) 0603: p1-P48V_LDO=(94.95,110.5) p2-GND=(97.05,110.5)
+
+    # Local GND via for C_LR8_IN pad2 — X=93.6 keeps >0.5 mm from PHANTOM tab edge (92.8)
+    vias.append(_gnd_via(93.6, 108.5))
+
+    # PHANTOM (HV 0.40 mm): C_LR8_IN pad1 <-> U2 tab <-> U2 pin3 + north stub for Task I
+    segments.extend([
+        _seg(89.95, 106.5, 89.95, 100.0, "PHANTOM", W_HV),   # north stub -> Task I trunk
+        _seg(89.95, 106.5, 89.95, 108.5, "PHANTOM", W_HV),   # down to U2 tab level
+        _seg(89.95, 108.5, 91.0,  108.5, "PHANTOM", W_HV),   # right to U2 tab centre
+        _seg(91.0,  108.5, 92.5,  108.5, "PHANTOM", W_HV),   # right toward pin3
+        _seg(92.5,  108.5, 92.5,  112.5, "PHANTOM", W_HV),   # down -> U2 pin3
+    ])
+
+    # P48V_LDO (0.30 mm): U2 pin2 -> C_LR8_OUT pad1 -> R_LR8_1 pad1
+    # Approach R_LR8_1 pad1 from above at Y=105 to avoid crossing pad2 (LR8_ADJ, same Y row).
+    # Y=105 stays >0.5 mm HV clearance above PHANTOM pads on C_LR8_IN (pad top 106.1).
+    segments.extend([
+        _seg( 91.0,  112.5,  91.0,   110.5, "P48V_LDO", W_POWER),
+        _seg( 91.0,  110.5,  94.95,  110.5, "P48V_LDO", W_POWER),  # -> C_LR8_OUT pad1
+        _seg( 94.95, 110.5,  94.95,  105.0, "P48V_LDO", W_POWER),  # up above C_LR8_IN
+        _seg( 94.95, 105.0,  86.425, 105.0, "P48V_LDO", W_POWER),  # left
+        _seg( 86.425, 105.0, 86.425, 107.5, "P48V_LDO", W_POWER),  # down -> R_LR8_1 pad1
+    ])
+
+    # LR8_ADJ (0.20 mm): R_LR8_1 pad2 -> R_LR8_2 pad1 -> U2 pin1
+    # Down-then-left avoids routing at Y=107.5 where both pads share the same row.
+    segments.extend([
+        _seg(87.575, 107.5, 87.575, 109.0, "LR8_ADJ"),
+        _seg(87.575, 109.0, 86.425, 109.0, "LR8_ADJ"),
+        _seg(86.425, 109.0, 86.425, 112.5, "LR8_ADJ"),  # passes through R_LR8_2 pad1
+        _seg(86.425, 112.5,  89.5,  112.5, "LR8_ADJ"),  # -> U2 pin1
+    ])
+
+    # GND (0.30 mm): LR8 cluster decoupling -> stitching vias
+    segments.extend([
+        # R_LR8_2 pad2 -> GND via at (88,121)
+        _seg(87.575, 110.5, 88.0,  110.5, "GND", W_POWER),
+        _seg( 88.0,  110.5, 88.0,  121.0, "GND", W_POWER),
+        # C_LR8_IN pad2 -> local GND via at (93.6,108.5)
+        _seg(92.05,  106.5, 93.6,  106.5, "GND", W_POWER),
+        _seg(93.6,   106.5, 93.6,  108.5, "GND", W_POWER),
+        # C_LR8_OUT pad2 -> GND via at (100,121)
+        _seg(97.05,  110.5, 97.0,  110.5, "GND", W_POWER),
+        _seg( 97.0,  110.5, 97.0,  121.0, "GND", W_POWER),
+        _seg( 97.0,  121.0, 100.0, 121.0, "GND", W_POWER),
+    ])
+
     # ── Commit to board ──────────────────────────────────────────────────
     b.footprints.extend(components)
     b.traceItems.extend(segments)
