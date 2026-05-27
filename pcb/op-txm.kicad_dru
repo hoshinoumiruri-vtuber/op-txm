@@ -1,18 +1,16 @@
 (version 1)
 
-# HV clearance: PHANTOM (48V) and V_BOOST (72V) require 0.5mm to all other copper
-(rule "HV_clearance_PHANTOM"
-  (condition "A.Net.Name == 'PHANTOM' && B.Net.Name != 'PHANTOM' && B.Net.Name != 'V_BOOST'")
+(rule "PHANTOM_clearance"
+  (condition "A.NetName == 'PHANTOM' && B.NetName != 'PHANTOM' && B.NetName != 'V_BOOST' && B.NetName != 'BP_CAPSULE'")
   (constraint clearance (min 0.5mm))
 )
 
-(rule "HV_clearance_V_BOOST"
-  (condition "A.Net.Name == 'V_BOOST' && B.Net.Name != 'V_BOOST' && B.Net.Name != 'PHANTOM'")
+(rule "V_BOOST_clearance"
+  (condition "A.NetName == 'V_BOOST' && B.NetName != 'V_BOOST' && B.NetName != 'PHANTOM' && B.NetName != 'BP_CAPSULE'")
   (constraint clearance (min 0.5mm))
 )
 
-# BP_CAPSULE bias net (~48V) — keep isolated from signal traces
-(rule "HV_clearance_BP_CAPSULE"
-  (condition "A.Net.Name == 'BP_CAPSULE' && B.Net.Name != 'BP_CAPSULE'")
+(rule "BP_CAPSULE_clearance"
+  (condition "A.NetName == 'BP_CAPSULE' && B.NetName != 'BP_CAPSULE' && B.NetName != 'PHANTOM' && B.NetName != 'V_BOOST'")
   (constraint clearance (min 0.5mm))
 )

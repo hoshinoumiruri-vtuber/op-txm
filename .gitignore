@@ -30,6 +30,9 @@ sim/signal_chain.png
 fp-info-cache
 *.000
 *.bak
+pcb/*.rpt
+pcb/op-txm.kicad_pcb
+pcb/op_txm_layout.png
 
 # OS
 .DS_Store
