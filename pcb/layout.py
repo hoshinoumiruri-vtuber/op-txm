@@ -814,6 +814,29 @@ def build_layout():
                    (99.75, 110.25), (100.25, 110.25)]:
         vias.append(_gnd_via(vx, vy))
 
+    # ── Task H: Charge pump ───────────────────────────────────────────────
+    # D1 SOT-23 (91,117): p1=PHANTOM(90.05,118.30) p2=V_BOOST(91.95,118.30) p3=GND(91,115.70)
+    # C_PUMP 0402 (91,120): p1=PHANTOM(90.425,120) p2=V_BOOST(91.575,120)
+    # C_RSVR 0603 (95,117): p1=V_BOOST(93.95,117) p2=GND(96.05,117)
+    # L1 0805 (100,117): p1=V_BOOST(98.9,117) p2=V_BOOST(101.1,117)
+    # C_LPF 0603 (105,117): p1=V_BOOST(103.95,117) p2=GND(106.05,117)
+    segments.extend([
+        # PHANTOM: extend south trunk from X=89.95 down to D1 p1 and C_PUMP p1
+        _seg(89.95, 106.5, 89.95, 120.0,  "PHANTOM", W_HV),
+        _seg(89.95, 118.3, 90.05, 118.3,  "PHANTOM", W_HV),
+        _seg(89.95, 120.0, 90.425, 120.0, "PHANTOM", W_HV),
+        # V_BOOST: D1 p2 → C_PUMP p2 → C_RSVR p1 → L1 p1 → L1 p2 → C_LPF p1
+        _seg(91.95, 118.3, 91.95, 117.0,  "V_BOOST", W_HV),
+        _seg(91.95, 117.0, 93.95, 117.0,  "V_BOOST", W_HV),
+        _seg(91.575, 120.0, 91.95, 120.0, "V_BOOST", W_HV),
+        _seg(91.95, 120.0, 91.95, 118.3,  "V_BOOST", W_HV),
+        _seg(93.95, 117.0, 98.9,  117.0,  "V_BOOST", W_HV),
+        _seg(101.1, 117.0, 103.95, 117.0, "V_BOOST", W_HV),
+    ])
+    vias.append(_gnd_via(91.0, 114.5))   # D1 p3 GND
+    vias.append(_gnd_via(96.05, 116.3))  # C_RSVR p2 GND
+    vias.append(_gnd_via(106.05, 116.3)) # C_LPF p2 GND
+
     # ── Commit to board ──────────────────────────────────────────────────
     b.footprints.extend(components)
     b.traceItems.extend(segments)
