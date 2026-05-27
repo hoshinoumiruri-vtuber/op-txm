@@ -814,6 +814,33 @@ def build_layout():
                    (99.75, 110.25), (100.25, 110.25)]:
         vias.append(_gnd_via(vx, vy))
 
+    # ── Task C: DC servo (U1 section B) ──────────────────────────────────
+    # U1 right pads X=102.7: pin7=SRV_OUT(80.365) pin6=SRV_INT(81.635)
+    # R_INJ(109,77.5) 0402: p1=SRV_OUT(108.425,77.5) p2=VGATE(109.575,77.5)
+    # R_INT(109,80.0) 0402: p1=VSOURCE(108.425,80.0) p2=SRV_INT(109.575,80.0)
+    # C_INT(109,83.0) 0603: p1=SRV_INT(107.95,83.0) p2=SRV_OUT(110.05,83.0)
+    segments.extend([
+        # SRV_OUT trunk at X=108.5
+        _seg(102.7,  80.365, 108.5,  80.365, "SRV_OUT", W_SIGNAL),
+        _seg(108.5,  80.365, 108.5,  77.5,   "SRV_OUT", W_SIGNAL),
+        _seg(108.5,  77.5,   108.425, 77.5,  "SRV_OUT", W_SIGNAL),  # → R_INJ p1
+        _seg(108.5,  80.365, 108.5,  83.0,   "SRV_OUT", W_SIGNAL),
+        _seg(108.5,  83.0,   110.05,  83.0,  "SRV_OUT", W_SIGNAL),  # → C_INT p2
+        # SRV_INT trunk at X=107.95
+        _seg(102.7,  81.635, 107.95, 81.635, "SRV_INT", W_SIGNAL),
+        _seg(107.95, 81.635, 107.95, 83.0,   "SRV_INT", W_SIGNAL),  # → C_INT p1
+        _seg(109.575, 80.0,  107.95, 80.0,   "SRV_INT", W_SIGNAL),
+        _seg(107.95,  80.0,  107.95, 81.635, "SRV_INT", W_SIGNAL),  # → R_INT p2
+        # VSOURCE to R_INT p1 (108.425,80.0) — branch east from existing VSOURCE at Y=67.3
+        _seg(106.425, 67.3,  108.425, 67.3,  "VSOURCE", W_SIGNAL),
+        _seg(108.425, 67.3,  108.425, 80.0,  "VSOURCE", W_SIGNAL),
+        # VGATE to R_INJ p2 (109.575,77.5) — extend east from VGATE bus at Y=67.3
+        _seg(99.05,  67.3,   105.5,  67.3,   "VGATE",   W_HIMP),
+        _seg(105.5,  67.3,   105.5,  75.5,   "VGATE",   W_HIMP),
+        _seg(105.5,  75.5,   109.575, 75.5,  "VGATE",   W_HIMP),
+        _seg(109.575, 75.5,  109.575, 77.5,  "VGATE",   W_HIMP),
+    ])
+
     # ── Task B: Audio zone EQ (U1 section A) ─────────────────────────────
     # U1 SOIC-8 at (100,81), PITCH=1.27, left pads X=97.3, right pads X=102.7
     # pin1=OUT_A/SIG_EQ  (97.3, 79.095)
