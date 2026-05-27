@@ -755,6 +755,26 @@ def build_layout():
         _seg( 97.0,  121.0, 100.0, 121.0, "GND", W_POWER),
     ])
 
+    # ── Task G1: TPS7A3901 — P48V_LDO to IN pins ─────────────────────────
+    # Left IN: p1(98.35,108.75), p2(98.35,109.25), p6(98.35,111.25)
+    # Right IN: p12(101.65,108.75), p11(101.65,109.25), p7(101.65,111.25)
+    # p6 and p7 approach from below: p3-p5 and p8-p10 (non-P48V_LDO) are in between
+    segments.extend([
+        # Trunk east from existing T at (94.95,105)
+        _seg( 94.95, 105.0, 102.0, 105.0, "P48V_LDO", W_POWER),
+        # Left p1 + p2 — drop from trunk
+        _seg( 98.35, 105.0,  98.35, 108.75, "P48V_LDO", W_POWER),
+        _seg( 98.35, 108.75, 98.35, 109.25, "P48V_LDO", W_POWER),
+        # Right p12 + p11 — drop from trunk
+        _seg(101.65, 105.0,  101.65, 108.75, "P48V_LDO", W_POWER),
+        _seg(101.65, 108.75, 101.65, 109.25, "P48V_LDO", W_POWER),
+        # East drop then west trunk: p6 and p7 from below
+        _seg(102.0,  105.0,  102.0,  112.0,  "P48V_LDO", W_POWER),
+        _seg(102.0,  112.0,   98.35, 112.0,  "P48V_LDO", W_POWER),
+        _seg( 98.35, 112.0,   98.35, 111.25, "P48V_LDO", W_POWER),
+        _seg(101.65, 112.0,  101.65, 111.25, "P48V_LDO", W_POWER),
+    ])
+
     # ── Commit to board ──────────────────────────────────────────────────
     b.footprints.extend(components)
     b.traceItems.extend(segments)
