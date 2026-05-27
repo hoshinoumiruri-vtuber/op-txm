@@ -793,6 +793,27 @@ def build_layout():
         _seg(103.425, 107.0, 103.425, 110.0, "N15V", W_POWER),
     ])
 
+    # ── Task G3: TPS7A3901 — FB loops, output decoupling, EP vias ───────
+    # TPS_FB_POS: R_TPS_P1 pad2(104.575,107) → R_TPS_P2 pad1(106.425,107)
+    # TPS_FB_NEG: R_TPS_N1 pad2(104.575,110) → R_TPS_N2 pad1(106.425,110)
+    # C_P15_OUT pad1(102.95,114) from P15V trunk at X=103.5
+    # C_N15_OUT pad1(106.95,114) from N15V at Y=107 corridor east then south
+    # EP GND: 4× thermal vias in 2×2 grid under U3 EP at (100,110)
+    segments.extend([
+        _seg(104.575, 107.0, 106.425, 107.0, "TPS_FB_POS", W_SIGNAL),
+        _seg(104.575, 110.0, 106.425, 110.0, "TPS_FB_NEG", W_SIGNAL),
+        # P15V → C_P15_OUT: branch south from trunk at X=103.5, Y=113 → Y=114
+        _seg(103.5, 113.0, 102.95, 113.0, "P15V", W_POWER),
+        _seg(102.95, 113.0, 102.95, 114.0, "P15V", W_POWER),
+        # N15V → C_N15_OUT: east from Y=107 corridor to X=106.95, south to Y=114
+        _seg(103.425, 107.0, 106.95, 107.0, "N15V", W_POWER),
+        _seg(106.95, 107.0, 106.95, 114.0, "N15V", W_POWER),
+    ])
+    # EP GND thermal vias: 2×2 grid at ±0.25mm from EP centre (100,110)
+    for vx, vy in [(99.75, 109.75), (100.25, 109.75),
+                   (99.75, 110.25), (100.25, 110.25)]:
+        vias.append(_gnd_via(vx, vy))
+
     # ── Commit to board ──────────────────────────────────────────────────
     b.footprints.extend(components)
     b.traceItems.extend(segments)
