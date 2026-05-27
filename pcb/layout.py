@@ -896,6 +896,29 @@ def build_layout():
         _seg(90.0,   77.5, 90.425, 77.5, "VSOURCE", W_SIGNAL),
     ])
 
+    # ── Task J: Transformer + XLR routing ────────────────────────────────
+    # TX_S3H(88,123)=TX_DRV_HOT  TX_S3R(88,126)=TX_DRV_RTN  TX_S3C(88,129)=GND
+    # TX_P1(109,123)=XLR_HOT     TX_P2(109,126)=XLR_COLD
+    # XLR1(112,123)=GND  XLR2(112,126)=XLR_HOT  XLR3(112,129)=XLR_COLD
+    segments.extend([
+        # SIG_EQ trunk south to TX_S3H (op-amp drives transformer secondary)
+        _seg(93.5, 87.5,  93.5, 121.0, "SIG_EQ", W_SIGNAL),
+        _seg(93.5, 121.0, 88.0, 121.0, "SIG_EQ", W_SIGNAL),
+        _seg(88.0, 121.0, 88.0, 123.0, "SIG_EQ", W_SIGNAL),
+        # TX_S3R (secondary return) → SIG_EQ feedback node
+        _seg(88.0, 126.0, 88.0, 124.5, "TX_DRV_RTN", W_SIGNAL),
+        # XLR_HOT: TX_P1(109,123) → XLR2(112,126)
+        _seg(109.0, 123.0, 110.5, 123.0, "XLR_HOT", W_SIGNAL),
+        _seg(110.5, 123.0, 110.5, 126.0, "XLR_HOT", W_SIGNAL),
+        _seg(110.5, 126.0, 112.0, 126.0, "XLR_HOT", W_SIGNAL),
+        # XLR_COLD: TX_P2(109,126) → XLR3(112,129)
+        _seg(109.0, 126.0, 111.0, 126.0, "XLR_COLD", W_SIGNAL),
+        _seg(111.0, 126.0, 111.0, 129.0, "XLR_COLD", W_SIGNAL),
+        _seg(111.0, 129.0, 112.0, 129.0, "XLR_COLD", W_SIGNAL),
+    ])
+    vias.append(_gnd_via(88.0, 130.5))   # TX_S3C GND stitch
+    vias.append(_gnd_via(112.0, 122.0))  # XLR1 GND stitch
+
     # ── Task I: HV rail trunks ────────────────────────────────────────────
     # V_BOOST: R_D stub end (108.8,71) south to charge pump rail (108.8,117)
     # then west to C_LPF p1 (103.95,117) to close the ring
