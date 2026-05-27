@@ -207,6 +207,16 @@ def _gnd_via(x, y):
     )
 
 
+def _net_via(x, y, net_name):
+    return Via(
+        position=Position(X=x, Y=y),
+        size=VIA_SIZE, drill=VIA_DRILL,
+        layers=["F.Cu", "B.Cu"],
+        net=NETS[net_name],
+        tstamp=str(_uuid.uuid4()),
+    )
+
+
 def _seg(x0, y0, x1, y1, net_name, width=W_SIGNAL, layer="F.Cu"):
     s = Segment()
     s.start = Position(X=x0, Y=y0)
@@ -699,12 +709,18 @@ def build_layout():
         _seg( 90.5, 69.0,  92.425, 69.0,  "FP_CAPSULE", W_HIMP),  # → C_IN pad1
     ])
 
-    # V_BOOST (HV 0.40 mm): R_D pad2 (107.575,65) stub south to zone boundary
-    # Jog to X=108.8 so HV trace edge clears R_S GND pad2 (107.575,69) by >0.5 mm.
+    # V_BOOST (HV 0.40 mm): R_D pad2 (107.575,65) short east jog on F.Cu, then north to Y=63.7
+    # (clears GND_SHIELD right edge 107.75 by 0.55 mm; stays above VSOURCE vertical at Y≥67.3).
+    # Via at (108.5,63.7) drops to B.Cu, east to X=113.1, south to Y=71.
+    # X=113.1 on B.Cu: fiducials are F.Cu SMD-only (no B.Cu pad); mounting hole at (115,60)
+    # left edge 113.9 → gap 0.6 mm; GND vias at X=112 right-pad-edge 112.3 → gap 0.6 mm.
     segments.extend([
-        _seg(107.575, 65.0, 108.8, 65.0, "V_BOOST", W_HV),
-        _seg(  108.8, 65.0, 108.8, 71.0, "V_BOOST", W_HV),
+        _seg(107.575, 65.0, 108.5,  65.0, "V_BOOST", W_HV),          # east on F.Cu
+        _seg(108.5,   65.0, 108.5,  63.7, "V_BOOST", W_HV),          # north on F.Cu
+        _seg(108.5,   63.7, 113.1,  63.7, "V_BOOST", W_HV, "B.Cu"),  # east on B.Cu
+        _seg(113.1,   63.7, 113.1,  71.0, "V_BOOST", W_HV, "B.Cu"),  # south on B.Cu
     ])
+    vias.append(_net_via(108.5, 63.7, "V_BOOST"))  # F.Cu ↔ B.Cu layer transition
 
     # ── Task F: Power zone — PHANTOM + LR8 ──────────────────────────────
     # Pad positions:
@@ -928,12 +944,13 @@ def build_layout():
     vias.append(_gnd_via(112.0, 122.0))  # XLR1 GND stitch
 
     # ── Task I: HV rail trunks ────────────────────────────────────────────
-    # V_BOOST: R_D stub end (108.8,71) south to charge pump rail (108.8,117)
-    # then west to C_LPF p1 (103.95,117) to close the ring
+    # V_BOOST: B.Cu trunk continues from (113.1,71) south to (113.1,116); via back to F.Cu;
+    # F.Cu west to C_LPF p1 at (103.95,116).
     segments.extend([
-        _seg(108.8, 71.0,  108.8, 116.0, "V_BOOST", W_HV),
-        _seg(108.8, 116.0, 103.95, 116.0, "V_BOOST", W_HV),
+        _seg(113.1,  71.0,  113.1, 116.0, "V_BOOST", W_HV, "B.Cu"),  # B.Cu trunk
+        _seg(113.1, 116.0, 103.95, 116.0, "V_BOOST", W_HV),          # F.Cu west to caps
     ])
+    vias.append(_net_via(113.1, 116.0, "V_BOOST"))  # B.Cu ↔ F.Cu layer transition
 
     # ── Task H: Charge pump ───────────────────────────────────────────────
     # D1 SOT-23 (91,117): p1=PHANTOM(90.05,118.30) p2=V_BOOST(91.95,118.30) p3=GND(91,115.70)

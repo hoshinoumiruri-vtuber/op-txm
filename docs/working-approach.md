@@ -79,7 +79,7 @@ pin1=LR8_ADJ(89.5, 112.5), pin2=P48V_LDO(91.0, 112.5), pin3=PHANTOM(92.5, 112.5)
 
 | Batch | Root cause | Status |
 |-------|-----------|--------|
-| B1 | Move V_BOOST trunk X=108.8 → X=111.5 (clears audio zone right side) | TODO |
+| B1 | V_BOOST trunk: F.Cu jog → via at (108.5,63.7) → B.Cu X=113.1 → via at (113.1,116) → F.Cu | DONE — 273→263 |
 | B2 | Move P15V trunk X=103.5 → X=104.5 (clears U1 right pads + N15V) | TODO |
 | B3 | Reroute N15V around P48V_LDO stubs (not through Y=108.5) | TODO |
 | B4 | Jog PHANTOM trunk west of LR8_ADJ pad at (89.5, 112.5) | TODO |
