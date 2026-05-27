@@ -788,27 +788,28 @@ def build_layout():
     # Local GND via for C_LR8_IN pad2
     vias.append(_gnd_via(93.6, 108.5))
 
-    # PHANTOM (HV 0.40 mm): north stub + down to U2 pin1 (IN) + branch to pin4 (EN)
-    # North stub for Task I stays at X=89.95 from C_LR8_IN pad1.
-    # South: jog to X=89.85 at Y=108.0, drop to pin1.
-    # EN branch: from Y=108.0 east at X=89.95 to X=92.15, drop to pin4.
+    # PHANTOM: EN branch at Y=107.5; B.Cu via bypass routes pin1 from south
+    # (left-column pads pin2/pin3 block north approach; B.Cu avoids the IC area)
     segments.extend([
         _seg(89.95, 106.5, 89.95, 100.0, "PHANTOM", W_HV),    # north stub -> Task I
-        _seg(89.95, 106.5, 89.95, 108.0, "PHANTOM", W_HV),    # south to branch
-        _seg(89.95, 108.0, 89.85, 108.0, "PHANTOM", W_HV),    # tiny west jog
-        _seg(89.85, 108.0, 89.85, 111.45, "PHANTOM", W_HV),   # south to pin1 (IN)
-        _seg(89.95, 108.0, 92.15, 108.0, "PHANTOM", W_HV),    # east to EN column
-        _seg(92.15, 108.0, 92.15, 110.025, "PHANTOM", W_HV),  # south to pin4 (EN)
+        _seg(89.95, 106.5, 89.95, 107.5, "PHANTOM", W_HV),    # south to EN junction / via
+        _seg(89.95, 107.5, 92.15, 107.5, "PHANTOM", W_HV),    # east to EN column
+        _seg(92.15, 107.5, 92.15, 110.025, "PHANTOM", W_HV),  # south to pin4 (EN)
+    ])
+    vias.append(_net_via(89.95, 107.5, "PHANTOM"))                                   # F→B
+    segments.append(_seg(89.95, 107.5, 89.95, 112.0, "PHANTOM", W_HV, "B.Cu"))      # B.Cu bypass
+    vias.append(_net_via(89.95, 112.0, "PHANTOM"))                                   # B→F
+    segments.extend([
+        _seg(89.95, 112.0, 89.85, 112.0, "PHANTOM", W_HV),    # west jog to pin1 column
+        _seg(89.85, 112.0, 89.85, 111.45, "PHANTOM", W_HV),   # north to pin1 (IN)
     ])
 
-    # U2_OUT (0.30 mm): pin2 → D_PREREG anode (east) + divider branch (east→north→west→south)
-    # Branch goes to X=92.8 (clears PHANTOM EN-column at X=92.15 + HV margin) then north
-    # to Y=109.0 (clears PHANTOM horizontal at Y=108.0 by >0.5 mm), west to R_LR8_1 p1.
+    # U2_OUT: pin2 east to D_PREREG anode; north to Y=108.5 (≥0.5mm from pin3 top Y=109.225)
     segments.extend([
-        _seg(89.85, 110.5,  92.8,  110.5, "U2_OUT", W_POWER),   # east past D_PREREG anode
-        _seg( 92.8, 110.5,  92.8,  109.0, "U2_OUT", W_POWER),   # north
-        _seg( 92.8, 109.0,  86.425, 109.0, "U2_OUT", W_POWER),  # west
-        _seg(86.425, 109.0, 86.425, 107.5, "U2_OUT", W_POWER),  # south to R_LR8_1 p1
+        _seg(89.85, 110.5,  92.8,  110.5, "U2_OUT", W_POWER),
+        _seg( 92.8, 110.5,  92.8,  108.5, "U2_OUT", W_POWER),
+        _seg( 92.8, 108.5,  86.425, 108.5, "U2_OUT", W_POWER),
+        _seg(86.425, 108.5, 86.425, 107.5, "U2_OUT", W_POWER),
     ])
 
     # P48V_LDO (0.30 mm): D_PREREG cathode → C_LR8_OUT pad1 → up to Y=105 trunk
@@ -830,9 +831,9 @@ def build_layout():
         # R_LR8_2 pad2 → GND trunk at X=88
         _seg(87.575, 110.5, 88.0,  110.5, "GND", W_POWER),
         _seg( 88.0,  110.5, 88.0,  121.0, "GND", W_POWER),
-        # U2 pin5 (GND) → south then west to GND trunk at X=88
-        _seg(92.15,  110.975, 92.15, 113.0, "GND", W_POWER),
-        _seg(92.15,  113.0,   88.0,  113.0, "GND", W_POWER),
+        # U2 pin5 (GND) → south then east to X=97 trunk (avoids PHANTOM south trunk at X=89.95)
+        _seg(92.15, 110.975, 92.15, 114.5, "GND", W_POWER),
+        _seg(92.15,  114.5,  97.0,  114.5, "GND", W_POWER),
         # C_LR8_IN pad2 → local GND via at (93.6,108.5)
         _seg(92.05,  106.5, 93.6,  106.5, "GND", W_POWER),
         _seg(93.6,   106.5, 93.6,  108.5, "GND", W_POWER),
@@ -1026,8 +1027,8 @@ def build_layout():
     # L1 0805 (100,117): p1=V_BOOST(98.9,117) p2=V_BOOST(101.1,117)
     # C_LPF 0603 (105,117): p1=V_BOOST(103.95,117) p2=GND(106.05,117)
     segments.extend([
-        # PHANTOM: extend south trunk from X=89.95 down to D1 p1 and C_PUMP p1
-        _seg(89.95, 106.5, 89.95, 120.0,  "PHANTOM", W_HV),
+        # PHANTOM: south trunk from B.Cu return via (Y=112) to D1/C_PUMP
+        _seg(89.95, 112.0, 89.95, 120.0,  "PHANTOM", W_HV),
         _seg(89.95, 118.3, 90.05, 118.3,  "PHANTOM", W_HV),
         _seg(89.95, 120.0, 90.425, 120.0, "PHANTOM", W_HV),
         # V_BOOST: D1 p2 → C_PUMP p2 → C_RSVR p1 → L1 p1 → L1 p2 → C_LPF p1
