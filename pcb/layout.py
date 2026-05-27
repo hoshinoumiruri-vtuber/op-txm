@@ -83,8 +83,9 @@ NETS = {
     "SIG_EQ":     9,     # EQ op-amp output → transformer driven winding
     "SRV_OUT":    10,    # DC servo output → gate injection
     "SRV_INT":    11,    # servo integrator node
-    "P48V_LDO":   12,    # LR8 output (35.2V)
+    "P48V_LDO":   12,    # TPS7A4001 output after D_PREREG (35.4V)
     "LR8_ADJ":    13,
+    "U2_OUT":     22,   # TPS7A4001 OUT before D_PREREG (35.7V)
     "TPS_FB_POS": 14,
     "TPS_FB_NEG": 15,
     "TX_DRV_HOT": 16,    # 3× secondary hot (op-amp side)
@@ -364,6 +365,43 @@ def sot89(ref, value, p1_net, p2_net, p3_net, tab_net, x, y):
         ])
 
 
+def sot23_5(ref, value, p1_net, p2_net, p3_net, p4_net, p5_net, x, y):
+    """SOT-23-5: 3 pads left col, 2 pads right col.
+    pin1=bottom-left, pin2=mid-left, pin3=top-left, pin4=top-right, pin5=bottom-right.
+    Pitch 0.95 mm left col; right col offset ±0.475 mm.
+    TPS7A4001DBVR: pin1=IN, pin2=OUT, pin3=ADJ, pin4=EN (tie to IN), pin5=GND.
+    """
+    return _fp(ref, value, x, y,
+        graphics=[
+            _crtyd(-2.0, -1.5, 2.0, 1.5),
+            _fab_rect(-0.65, -0.95, 0.65, 0.95),
+            _ref(ref, dx=-2.5, dy=0),
+        ],
+        pads=[
+            _smd(1, -1.15,  0.95, 1.0, 0.65, p1_net),   # IN
+            _smd(2, -1.15,  0.00, 1.0, 0.65, p2_net),   # OUT
+            _smd(3, -1.15, -0.95, 1.0, 0.65, p3_net),   # ADJ
+            _smd(4,  1.15, -0.475, 1.0, 0.65, p4_net),  # EN
+            _smd(5,  1.15,  0.475, 1.0, 0.65, p5_net),  # GND
+        ])
+
+
+def sod123(ref, value, anode_net, cathode_net, x, y):
+    """SOD-123: pin1=anode (left), pin2=cathode (right). Horizontal orientation.
+    Component mark (cathode bar) faces right (+X).
+    """
+    return _fp(ref, value, x, y,
+        graphics=[
+            _crtyd(-2.0, -0.9, 2.0, 0.9),
+            _fab_rect(-0.65, -0.45, 0.65, 0.45),
+            _ref(ref, dx=0, dy=-1.2),
+        ],
+        pads=[
+            _smd(1, -1.25, 0, 1.0, 0.9, anode_net),    # anode
+            _smd(2,  1.25, 0, 1.0, 0.9, cathode_net),  # cathode
+        ])
+
+
 def wson12(ref, value, nets12, x, y):
     """WSON-12 3×3 mm: 6 pads left, 6 pads right + exposed pad (EP) centre.
     nets12: 12 net names (index 0=pin1 .. 11=pin12); index 12 = EP net.
@@ -461,10 +499,12 @@ def build_layout():
     components.append(capsule_pad("BP",         "BP_CAPSULE", 100.0, 62.0))
     components.append(capsule_pad("GND_SHIELD", "GND",        107.0, 62.0))
 
-    # Q1: MMBF170LT1G SOT-23 (pin1=S, pin2=G, pin3=D in SOT-23 pinout)
-    # MMBF170 SOT-23 pinout: 1=Gate, 2=Source, 3=Drain (check datasheet!)
+    # Q1: 2SK209-Y SOT-23 — low-noise audio JFET
+    # VERIFY 2SK209-Y(TE85L,F) SOT-23 pinout against Toshiba datasheet before ordering.
+    # MMBF170 was 1=Gate, 2=Source, 3=Drain; 2SK209 may differ (Toshiba SC-59: 1=S, 2=G, 3=D).
+    # If pinout differs the net assignment here must be updated to match.
     # Placed Y=66 — below capsule pads
-    components.append(sot23("Q1", "MMBF170LT1G",
+    components.append(sot23("Q1", "2SK209-Y",
                              "VGATE", "VSOURCE", "VDRAIN",
                              100.0, 66.0))
 
@@ -557,14 +597,25 @@ def build_layout():
     # POWER ZONE  Y=[100,122]  — LR8 pre-reg + TPS7A3901 ±15V + charge pump
     # ══════════════════════════════════════════════════════════════════════
 
-    # U2: LR8 SOT-89  — 48V PHANTOM → 35.2V (P48V_LDO)
-    components.append(sot89("U2", "LR8",
-                             "LR8_ADJ", "P48V_LDO", "PHANTOM", "PHANTOM",
-                             91.0, 110.5))
+    # U2: TPS7A4001 SOT-23-5 — 48V PHANTOM → 35.7V (U2_OUT) → D_PREREG → 35.4V (P48V_LDO)
+    # Pad positions at (91, 110.5):
+    #   pin1(IN/PHANTOM)=(89.85,111.45)  pin2(OUT/U2_OUT)=(89.85,110.5)
+    #   pin3(ADJ)=(89.85,109.55)         pin4(EN/PHANTOM)=(92.15,110.025)
+    #   pin5(GND)=(92.15,110.975)
+    components.append(sot23_5("U2", "TPS7A4001",
+                               "PHANTOM", "U2_OUT", "LR8_ADJ", "PHANTOM", "GND",
+                               91.0, 110.5))
 
-    # LR8 programming resistors — left of U2
-    components.append(r0402("R_LR8_1", "270k", "P48V_LDO", "LR8_ADJ", 87.0, 107.5))
-    components.append(r0402("R_LR8_2", "10k",  "LR8_ADJ",  "GND",     87.0, 110.5))
+    # D_PREREG: BAT46W SOD-123 — anode=U2_OUT, cathode=P48V_LDO
+    # Pad positions at (92.5, 110.5):
+    #   anode(U2_OUT)=(91.25,110.5)  cathode(P48V_LDO)=(93.75,110.5)
+    components.append(sod123("D_PREREG", "BAT46W",
+                              "U2_OUT", "P48V_LDO",
+                              92.5, 110.5))
+
+    # TPS7A4001 programming resistors — left of U2
+    components.append(r0402("R_LR8_1", "294k", "U2_OUT",  "LR8_ADJ", 87.0, 107.5))
+    components.append(r0402("R_LR8_2", "10k",  "LR8_ADJ", "GND",     87.0, 110.5))
 
     # LR8 decoupling
     components.append(r0603("C_LR8_IN",  "10u/100V", "PHANTOM",  "GND", 91.0, 106.5))
@@ -589,9 +640,9 @@ def build_layout():
     components.append(wson12("U3", "TPS7A3901", tps_nets, 100.0, 110.0))
 
     # TPS7A3901 programming resistors — right of U3
-    components.append(r0402("R_TPS_P1", "127k", "P15V",       "TPS_FB_POS", 104.0, 107.0))
+    components.append(r0402("R_TPS_P1", "115k", "P15V",       "TPS_FB_POS", 104.0, 107.0))
     components.append(r0402("R_TPS_P2", "10k",  "TPS_FB_POS", "GND",        107.0, 107.0))
-    components.append(r0402("R_TPS_N1", "127k", "N15V",       "TPS_FB_NEG", 104.0, 110.0))
+    components.append(r0402("R_TPS_N1", "115k", "N15V",       "TPS_FB_NEG", 104.0, 110.0))
     components.append(r0402("R_TPS_N2", "10k",  "TPS_FB_NEG", "GND",        107.0, 110.0))
 
     # TPS7A3901 output decoupling
@@ -722,56 +773,70 @@ def build_layout():
     ])
     vias.append(_net_via(108.5, 63.7, "V_BOOST"))  # F.Cu ↔ B.Cu layer transition
 
-    # ── Task F: Power zone — PHANTOM + LR8 ──────────────────────────────
+    # ── Task F: Power zone — PHANTOM + TPS7A4001 + D_PREREG ─────────────────
     # Pad positions:
     #   C_LR8_IN(91,106.5) 0603: p1-PHANTOM=(89.95,106.5) p2-GND=(92.05,106.5)
-    #   U2-LR8(91,110.5) SOT-89: pin1-LR8_ADJ=(89.5,112.5) pin2-P48V_LDO=(91,112.5)
-    #                             pin3-PHANTOM=(92.5,112.5) tab-PHANTOM=(91,108.5)
-    #   R_LR8_1(87,107.5) 0402:  p1-P48V_LDO=(86.425,107.5) p2-LR8_ADJ=(87.575,107.5)
+    #   U2-TPS7A4001(91,110.5) SOT-23-5:
+    #     pin1(IN/PHANTOM)=(89.85,111.45)  pin2(OUT/U2_OUT)=(89.85,110.5)
+    #     pin3(ADJ/LR8_ADJ)=(89.85,109.55) pin4(EN/PHANTOM)=(92.15,110.025)
+    #     pin5(GND)=(92.15,110.975)
+    #   D_PREREG(92.5,110.5) SOD-123: anode(U2_OUT)=(91.25,110.5) cathode(P48V_LDO)=(93.75,110.5)
+    #   R_LR8_1(87,107.5) 0402:  p1-U2_OUT=(86.425,107.5) p2-LR8_ADJ=(87.575,107.5)
     #   R_LR8_2(87,110.5) 0402:  p1-LR8_ADJ=(86.425,110.5) p2-GND=(87.575,110.5)
     #   C_LR8_OUT(96,110.5) 0603: p1-P48V_LDO=(94.95,110.5) p2-GND=(97.05,110.5)
 
-    # Local GND via for C_LR8_IN pad2 — X=93.6 keeps >0.5 mm from PHANTOM tab edge (92.8)
+    # Local GND via for C_LR8_IN pad2
     vias.append(_gnd_via(93.6, 108.5))
 
-    # PHANTOM (HV 0.40 mm): C_LR8_IN pad1 <-> U2 tab <-> U2 pin3 + north stub for Task I
+    # PHANTOM (HV 0.40 mm): north stub + down to U2 pin1 (IN) + branch to pin4 (EN)
+    # North stub for Task I stays at X=89.95 from C_LR8_IN pad1.
+    # South: jog to X=89.85 at Y=108.0, drop to pin1.
+    # EN branch: from Y=108.0 east at X=89.95 to X=92.15, drop to pin4.
     segments.extend([
-        _seg(89.95, 106.5, 89.95, 100.0, "PHANTOM", W_HV),   # north stub -> Task I trunk
-        _seg(89.95, 106.5, 89.95, 108.5, "PHANTOM", W_HV),   # down to U2 tab level
-        _seg(89.95, 108.5, 91.0,  108.5, "PHANTOM", W_HV),   # right to U2 tab centre
-        _seg(91.0,  108.5, 92.5,  108.5, "PHANTOM", W_HV),   # right toward pin3
-        _seg(92.5,  108.5, 92.5,  112.5, "PHANTOM", W_HV),   # down -> U2 pin3
+        _seg(89.95, 106.5, 89.95, 100.0, "PHANTOM", W_HV),    # north stub -> Task I
+        _seg(89.95, 106.5, 89.95, 108.0, "PHANTOM", W_HV),    # south to branch
+        _seg(89.95, 108.0, 89.85, 108.0, "PHANTOM", W_HV),    # tiny west jog
+        _seg(89.85, 108.0, 89.85, 111.45, "PHANTOM", W_HV),   # south to pin1 (IN)
+        _seg(89.95, 108.0, 92.15, 108.0, "PHANTOM", W_HV),    # east to EN column
+        _seg(92.15, 108.0, 92.15, 110.025, "PHANTOM", W_HV),  # south to pin4 (EN)
     ])
 
-    # P48V_LDO (0.30 mm): U2 pin2 -> C_LR8_OUT pad1 -> R_LR8_1 pad1
-    # Approach R_LR8_1 pad1 from above at Y=105 to avoid crossing pad2 (LR8_ADJ, same Y row).
-    # Y=105 stays >0.5 mm HV clearance above PHANTOM pads on C_LR8_IN (pad top 106.1).
+    # U2_OUT (0.30 mm): pin2 → D_PREREG anode (east) + divider branch (east→north→west→south)
+    # Branch goes to X=92.8 (clears PHANTOM EN-column at X=92.15 + HV margin) then north
+    # to Y=109.0 (clears PHANTOM horizontal at Y=108.0 by >0.5 mm), west to R_LR8_1 p1.
     segments.extend([
-        _seg( 91.0,  112.5,  91.0,   110.5, "P48V_LDO", W_POWER),
-        _seg( 91.0,  110.5,  94.95,  110.5, "P48V_LDO", W_POWER),  # -> C_LR8_OUT pad1
-        _seg( 94.95, 110.5,  94.95,  105.0, "P48V_LDO", W_POWER),  # up above C_LR8_IN
-        _seg( 94.95, 105.0,  86.425, 105.0, "P48V_LDO", W_POWER),  # left
-        _seg( 86.425, 105.0, 86.425, 107.5, "P48V_LDO", W_POWER),  # down -> R_LR8_1 pad1
+        _seg(89.85, 110.5,  92.8,  110.5, "U2_OUT", W_POWER),   # east past D_PREREG anode
+        _seg( 92.8, 110.5,  92.8,  109.0, "U2_OUT", W_POWER),   # north
+        _seg( 92.8, 109.0,  86.425, 109.0, "U2_OUT", W_POWER),  # west
+        _seg(86.425, 109.0, 86.425, 107.5, "U2_OUT", W_POWER),  # south to R_LR8_1 p1
     ])
 
-    # LR8_ADJ (0.20 mm): R_LR8_1 pad2 -> R_LR8_2 pad1 -> U2 pin1
-    # Down-then-left avoids routing at Y=107.5 where both pads share the same row.
+    # P48V_LDO (0.30 mm): D_PREREG cathode → C_LR8_OUT pad1 → up to Y=105 trunk
     segments.extend([
-        _seg(87.575, 107.5, 87.575, 109.0, "LR8_ADJ"),
-        _seg(87.575, 109.0, 86.425, 109.0, "LR8_ADJ"),
-        _seg(86.425, 109.0, 86.425, 112.5, "LR8_ADJ"),  # passes through R_LR8_2 pad1
-        _seg(86.425, 112.5,  89.5,  112.5, "LR8_ADJ"),  # -> U2 pin1
+        _seg(93.75, 110.5,  94.95, 110.5, "P48V_LDO", W_POWER),  # cathode -> C_LR8_OUT
+        _seg(94.95, 110.5,  94.95, 105.0, "P48V_LDO", W_POWER),  # up to trunk
     ])
 
-    # GND (0.30 mm): LR8 cluster decoupling -> stitching vias
+    # LR8_ADJ (0.20 mm): R_LR8_1 p2 → T-junction at Y=109.55 → pin3 (ADJ) and R_LR8_2 p1
     segments.extend([
-        # R_LR8_2 pad2 -> GND via at (88,121)
+        _seg(87.575, 107.5,  87.575, 109.55, "LR8_ADJ"),           # R_LR8_1 p2 south
+        _seg(87.575, 109.55, 89.85,  109.55, "LR8_ADJ"),           # east to pin3 (ADJ)
+        _seg(87.575, 109.55, 86.425, 109.55, "LR8_ADJ"),           # west branch
+        _seg(86.425, 109.55, 86.425, 110.5,  "LR8_ADJ"),           # south to R_LR8_2 p1
+    ])
+
+    # GND (0.30 mm): decoupling + pin5 → stitching vias
+    segments.extend([
+        # R_LR8_2 pad2 → GND trunk at X=88
         _seg(87.575, 110.5, 88.0,  110.5, "GND", W_POWER),
         _seg( 88.0,  110.5, 88.0,  121.0, "GND", W_POWER),
-        # C_LR8_IN pad2 -> local GND via at (93.6,108.5)
+        # U2 pin5 (GND) → south then west to GND trunk at X=88
+        _seg(92.15,  110.975, 92.15, 113.0, "GND", W_POWER),
+        _seg(92.15,  113.0,   88.0,  113.0, "GND", W_POWER),
+        # C_LR8_IN pad2 → local GND via at (93.6,108.5)
         _seg(92.05,  106.5, 93.6,  106.5, "GND", W_POWER),
         _seg(93.6,   106.5, 93.6,  108.5, "GND", W_POWER),
-        # C_LR8_OUT pad2 -> GND via at (100,121)
+        # C_LR8_OUT pad2 → GND via at (100,121)
         _seg(97.05,  110.5, 97.0,  110.5, "GND", W_POWER),
         _seg( 97.0,  110.5, 97.0,  121.0, "GND", W_POWER),
         _seg( 97.0,  121.0, 100.0, 121.0, "GND", W_POWER),
@@ -925,10 +990,12 @@ def build_layout():
     # TX_P1(109,123)=XLR_HOT     TX_P2(109,126)=XLR_COLD
     # XLR1(112,123)=GND  XLR2(112,126)=XLR_HOT  XLR3(112,129)=XLR_COLD
     segments.extend([
-        # SIG_EQ trunk south to TX_S3H (op-amp drives transformer secondary)
-        _seg(93.5, 87.5,  93.5, 121.0, "SIG_EQ", W_SIGNAL),
-        _seg(93.5, 121.0, 88.0, 121.0, "SIG_EQ", W_SIGNAL),
-        _seg(88.0, 121.0, 88.0, 123.0, "SIG_EQ", W_SIGNAL),
+        # SIG_EQ trunk south to TX_S3H — jog west at Y=97 to X=88.5 (clears power zone)
+        _seg(93.5,  87.5, 93.5,  97.0, "SIG_EQ", W_SIGNAL),
+        _seg(93.5,  97.0, 88.5,  97.0, "SIG_EQ", W_SIGNAL),
+        _seg(88.5,  97.0, 88.5, 122.0, "SIG_EQ", W_SIGNAL),
+        _seg(88.5, 122.0, 88.0, 122.0, "SIG_EQ", W_SIGNAL),
+        _seg(88.0, 122.0, 88.0, 123.0, "SIG_EQ", W_SIGNAL),
         # TX_S3R (secondary return) → SIG_EQ feedback node
         _seg(88.0, 126.0, 88.0, 124.5, "TX_DRV_RTN", W_SIGNAL),
         # XLR_HOT: TX_P1(109,123) → XLR2(112,126) — jog at X=110 to avoid XLR1 GND pad
