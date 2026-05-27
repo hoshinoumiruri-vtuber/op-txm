@@ -841,6 +841,16 @@ def build_layout():
         _seg(109.575, 75.5,  109.575, 77.5,  "VGATE",   W_HIMP),
     ])
 
+    # ── Task D: U1 power pins ────────────────────────────────────────────
+    # pin8=P15V (102.7,79.095): extend P15V trunk (X=103.5) north then west
+    # pin4=N15V (97.3,82.905):  extend N15V trunk (X=97.0) north then east
+    segments.extend([
+        _seg(103.5, 107.0, 103.5,  79.095, "P15V", W_POWER),
+        _seg(103.5,  79.095, 102.7, 79.095, "P15V", W_POWER),
+        _seg(97.0,  107.0,  97.0,  82.905, "N15V", W_POWER),
+        _seg(97.0,   82.905, 97.3,  82.905, "N15V", W_POWER),
+    ])
+
     # ── Task B: Audio zone EQ (U1 section A) ─────────────────────────────
     # U1 SOIC-8 at (100,81), PITCH=1.27, left pads X=97.3, right pads X=102.7
     # pin1=OUT_A/SIG_EQ  (97.3, 79.095)
