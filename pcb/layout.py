@@ -814,6 +814,14 @@ def build_layout():
                    (99.75, 110.25), (100.25, 110.25)]:
         vias.append(_gnd_via(vx, vy))
 
+    # ── Task I: HV rail trunks ────────────────────────────────────────────
+    # V_BOOST: R_D stub end (108.8,71) south to charge pump rail (108.8,117)
+    # then west to C_LPF p1 (103.95,117) to close the ring
+    segments.extend([
+        _seg(108.8, 71.0,  108.8, 117.0, "V_BOOST", W_HV),
+        _seg(108.8, 117.0, 103.95, 117.0, "V_BOOST", W_HV),
+    ])
+
     # ── Task H: Charge pump ───────────────────────────────────────────────
     # D1 SOT-23 (91,117): p1=PHANTOM(90.05,118.30) p2=V_BOOST(91.95,118.30) p3=GND(91,115.70)
     # C_PUMP 0402 (91,120): p1=PHANTOM(90.425,120) p2=V_BOOST(91.575,120)
