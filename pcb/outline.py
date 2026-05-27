@@ -147,9 +147,8 @@ def generate_board() -> str:
     cx, cy = BOARD_CENTER_X, BOARD_CENTER_Y
     outline  = rect_outline_sexpr(cx, cy, BOARD_W, BOARD_H)
     holes    = "\n".join(mount_hole_sexpr(x, y, MOUNT_HOLE_DIAM) for x, y in MOUNT_HOLES)
-    keepouts = "\n".join(keepout_zone_sexpr(kx, ky, kw, kh, cx, cy)
-                         for kx, ky, kw, kh in HV_KEEPOUTS)
     cutout   = tx_cutout_sexpr()
+    # HV_Keepout zone removed — HV clearance enforced via op-txm.kicad_dru instead
 
     return f"""\
 (kicad_pcb
@@ -209,8 +208,6 @@ def generate_board() -> str:
 {holes}
 
 {cutout}
-
-{keepouts}
 
 )
 """

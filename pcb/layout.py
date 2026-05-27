@@ -627,7 +627,10 @@ def build_layout():
     components.append(npth_slot("SLOT2", 109.0, 133.0))
 
     # ── GND stitching vias ───────────────────────────────────────────────
-    for vy in [71.0, 93.0, 121.0]:
+    # Y=71 row: avoid X=100 (lands on N15V bus at Y=71); use X=95 instead
+    for vx in [88.0, 95.0, 112.0]:
+        vias.append(_gnd_via(vx, 71.0))
+    for vy in [93.0, 121.0]:
         for vx in [88.0, 100.0, 112.0]:
             vias.append(_gnd_via(vx, vy))
 
@@ -657,11 +660,14 @@ def build_layout():
     ])
 
     # VGATE (high-Z, W_HIMP=0.15mm): R_GBIAS pad2 and C_IN pad2 → Q1 gate
+    # Route at Y=66.0 (not 67.30) east of Q1 gate to avoid Q1 VSOURCE pad at (100.95,67.30)
     segments.extend([
-        _seg(94.10,  65.00, 94.10,  67.30, "VGATE", W_HIMP),  # R_GBIAS pad2 down
-        _seg(94.10,  67.30, 99.05,  67.30, "VGATE", W_HIMP),  # → Q1 gate
+        _seg(94.10,  65.00, 94.10,  66.00, "VGATE", W_HIMP),  # R_GBIAS pad2 down to Y=66
+        _seg(94.10,  66.00, 99.05,  66.00, "VGATE", W_HIMP),  # east at Y=66
+        _seg(99.05,  66.00, 99.05,  67.30, "VGATE", W_HIMP),  # down to Q1 gate
         _seg(93.575, 69.00, 93.575, 67.30, "VGATE", W_HIMP),  # C_IN pad2 up
         _seg(93.575, 67.30, 94.10,  67.30, "VGATE", W_HIMP),  # → join node
+        _seg(94.10,  67.30, 94.10,  66.00, "VGATE", W_HIMP),  # up to Y=66 bus
     ])
 
     # GND bus at X=112 (W_POWER): GND_SHIELD pad, D_RS anode, R_S pad2 → GND via(112,71)
@@ -786,11 +792,12 @@ def build_layout():
         _seg(101.1,  113.0,  103.5,  113.0,  "P15V", W_POWER),
         _seg(103.5,  113.0,  103.5,  107.0,  "P15V", W_POWER),
         _seg(103.5,  107.0,  103.425, 107.0, "P15V", W_POWER),
-        # N15V: west, north above U3, east to R_TPS_N1
-        _seg( 98.35, 110.25,  97.0,  110.25, "N15V", W_POWER),
-        _seg( 97.0,  110.25,  97.0,  107.0,  "N15V", W_POWER),
-        _seg( 97.0,  107.0,  103.425, 107.0, "N15V", W_POWER),  # shared Y=107 corridor
-        _seg(103.425, 107.0, 103.425, 110.0, "N15V", W_POWER),
+        # N15V: west to X=96.5 (clears C_LR8_OUT GND pad at X=97.05), north, east to R_TPS_N1
+        # Route east at Y=108.5 to avoid P48V_LDO horizontal at Y=107
+        _seg( 98.35, 110.25,  96.5,  110.25, "N15V", W_POWER),
+        _seg( 96.5,  110.25,  96.5,  108.5,  "N15V", W_POWER),
+        _seg( 96.5,  108.5,  103.425, 108.5, "N15V", W_POWER),
+        _seg(103.425, 108.5, 103.425, 110.0, "N15V", W_POWER),
     ])
 
     # ── Task G3: TPS7A3901 — FB loops, output decoupling, EP vias ───────
@@ -809,9 +816,9 @@ def build_layout():
         _seg(103.425, 107.0, 106.95, 107.0, "N15V", W_POWER),
         _seg(106.95, 107.0, 106.95, 114.0, "N15V", W_POWER),
     ])
-    # EP GND thermal vias: 2×2 grid at ±0.25mm from EP centre (100,110)
-    for vx, vy in [(99.75, 109.75), (100.25, 109.75),
-                   (99.75, 110.25), (100.25, 110.25)]:
+    # EP GND thermal vias: 2×2 grid at ±0.35mm from EP centre (100,110)
+    for vx, vy in [(99.65, 109.65), (100.35, 109.65),
+                   (99.65, 110.35), (100.35, 110.35)]:
         vias.append(_gnd_via(vx, vy))
 
     # ── Task C: DC servo (U1 section B) ──────────────────────────────────
@@ -820,23 +827,24 @@ def build_layout():
     # R_INT(109,80.0) 0402: p1=VSOURCE(108.425,80.0) p2=SRV_INT(109.575,80.0)
     # C_INT(109,83.0) 0603: p1=SRV_INT(107.95,83.0) p2=SRV_OUT(110.05,83.0)
     segments.extend([
-        # SRV_OUT trunk at X=108.5
-        _seg(102.7,  80.365, 108.5,  80.365, "SRV_OUT", W_SIGNAL),
-        _seg(108.5,  80.365, 108.5,  77.5,   "SRV_OUT", W_SIGNAL),
-        _seg(108.5,  77.5,   108.425, 77.5,  "SRV_OUT", W_SIGNAL),  # → R_INJ p1
-        _seg(108.5,  80.365, 108.5,  83.0,   "SRV_OUT", W_SIGNAL),
-        _seg(108.5,  83.0,   110.05,  83.0,  "SRV_OUT", W_SIGNAL),  # → C_INT p2
-        # SRV_INT trunk at X=107.95
-        _seg(102.7,  81.635, 107.95, 81.635, "SRV_INT", W_SIGNAL),
-        _seg(107.95, 81.635, 107.95, 83.0,   "SRV_INT", W_SIGNAL),  # → C_INT p1
-        _seg(109.575, 80.0,  107.95, 80.0,   "SRV_INT", W_SIGNAL),
-        _seg(107.95,  80.0,  107.95, 81.635, "SRV_INT", W_SIGNAL),  # → R_INT p2
-        # VSOURCE to R_INT p1 (108.425,80.0) — branch east from existing VSOURCE at Y=67.3
+        # SRV_OUT trunk at X=107.5 (shifted from 108.5 to clear V_BOOST at X=108.8)
+        _seg(102.7,  80.365, 107.5,  80.365, "SRV_OUT", W_SIGNAL),
+        _seg(107.5,  80.365, 107.5,  77.5,   "SRV_OUT", W_SIGNAL),
+        _seg(107.5,  77.5,   108.425, 77.5,  "SRV_OUT", W_SIGNAL),  # → R_INJ p1
+        _seg(107.5,  80.365, 107.5,  83.0,   "SRV_OUT", W_SIGNAL),
+        _seg(107.5,  83.0,   110.05,  83.0,  "SRV_OUT", W_SIGNAL),  # → C_INT p2
+        # SRV_INT trunk at X=106.5
+        _seg(102.7,  81.635, 106.5, 81.635, "SRV_INT", W_SIGNAL),
+        _seg(106.5,  81.635, 106.5, 83.0,   "SRV_INT", W_SIGNAL),  # → C_INT p1
+        _seg(106.5,  83.0,   107.95, 83.0,  "SRV_INT", W_SIGNAL),
+        _seg(109.575, 80.0,  106.5,  80.0,  "SRV_INT", W_SIGNAL),
+        _seg(106.5,   80.0,  106.5,  81.635,"SRV_INT", W_SIGNAL),   # → R_INT p2
+        # VSOURCE to R_INT p1 (108.425,80.0) — branch east from VSOURCE at Y=67.3
         _seg(106.425, 67.3,  108.425, 67.3,  "VSOURCE", W_SIGNAL),
         _seg(108.425, 67.3,  108.425, 80.0,  "VSOURCE", W_SIGNAL),
-        # VGATE to R_INJ p2 (109.575,77.5) — extend east from VGATE bus at Y=67.3
-        _seg(99.05,  67.3,   105.5,  67.3,   "VGATE",   W_HIMP),
-        _seg(105.5,  67.3,   105.5,  75.5,   "VGATE",   W_HIMP),
+        # VGATE to R_INJ p2 (109.575,77.5) — extend east at Y=66 (avoids VSOURCE at Y=67.3)
+        _seg(99.05,  66.0,   105.5,  66.0,   "VGATE",   W_HIMP),
+        _seg(105.5,  66.0,   105.5,  75.5,   "VGATE",   W_HIMP),
         _seg(105.5,  75.5,   109.575, 75.5,  "VGATE",   W_HIMP),
         _seg(109.575, 75.5,  109.575, 77.5,  "VGATE",   W_HIMP),
     ])
@@ -849,9 +857,9 @@ def build_layout():
         # P15V: extend trunk north to Y=73, bus west to C_P15_100n
         _seg(103.5,  79.095, 103.5,  73.0,  "P15V", W_POWER),
         _seg(103.5,  73.0,   95.425, 73.0,  "P15V", W_POWER),
-        # N15V: extend trunk north to Y=71, bus east, stubs to cap pads
-        _seg(97.0,   82.905, 97.0,   71.0,  "N15V", W_POWER),
-        _seg(97.0,   71.0,   106.95, 71.0,  "N15V", W_POWER),
+        # N15V: extend trunk north to Y=71 at X=96.5, bus east, stubs to cap pads
+        _seg(96.5,   82.905, 96.5,   71.0,  "N15V", W_POWER),
+        _seg(96.5,   71.0,   106.95, 71.0,  "N15V", W_POWER),
         _seg(103.425, 71.0,  103.425, 73.0, "N15V", W_POWER),
         _seg(106.95,  71.0,  106.95,  73.0, "N15V", W_POWER),
     ])
@@ -862,8 +870,8 @@ def build_layout():
     segments.extend([
         _seg(103.5, 107.0, 103.5,  79.095, "P15V", W_POWER),
         _seg(103.5,  79.095, 102.7, 79.095, "P15V", W_POWER),
-        _seg(97.0,  107.0,  97.0,  82.905, "N15V", W_POWER),
-        _seg(97.0,   82.905, 97.3,  82.905, "N15V", W_POWER),
+        _seg(96.5,  108.5,  96.5,  82.905, "N15V", W_POWER),
+        _seg(96.5,  82.905, 97.3,  82.905, "N15V", W_POWER),
     ])
 
     # ── Task B: Audio zone EQ (U1 section A) ─────────────────────────────
@@ -907,14 +915,14 @@ def build_layout():
         _seg(88.0, 121.0, 88.0, 123.0, "SIG_EQ", W_SIGNAL),
         # TX_S3R (secondary return) → SIG_EQ feedback node
         _seg(88.0, 126.0, 88.0, 124.5, "TX_DRV_RTN", W_SIGNAL),
-        # XLR_HOT: TX_P1(109,123) → XLR2(112,126)
-        _seg(109.0, 123.0, 110.5, 123.0, "XLR_HOT", W_SIGNAL),
-        _seg(110.5, 123.0, 110.5, 126.0, "XLR_HOT", W_SIGNAL),
-        _seg(110.5, 126.0, 112.0, 126.0, "XLR_HOT", W_SIGNAL),
-        # XLR_COLD: TX_P2(109,126) → XLR3(112,129)
-        _seg(109.0, 126.0, 111.0, 126.0, "XLR_COLD", W_SIGNAL),
-        _seg(111.0, 126.0, 111.0, 129.0, "XLR_COLD", W_SIGNAL),
-        _seg(111.0, 129.0, 112.0, 129.0, "XLR_COLD", W_SIGNAL),
+        # XLR_HOT: TX_P1(109,123) → XLR2(112,126) — jog at X=110 to avoid XLR1 GND pad
+        _seg(109.0, 123.0, 110.0, 123.0, "XLR_HOT", W_SIGNAL),
+        _seg(110.0, 123.0, 110.0, 126.0, "XLR_HOT", W_SIGNAL),
+        _seg(110.0, 126.0, 112.0, 126.0, "XLR_HOT", W_SIGNAL),
+        # XLR_COLD: TX_P2(109,126) → XLR3(112,129) — jog at X=110.7 (clears HOT at X=110)
+        _seg(109.0, 126.0, 110.7, 126.0, "XLR_COLD", W_SIGNAL),
+        _seg(110.7, 126.0, 110.7, 129.0, "XLR_COLD", W_SIGNAL),
+        _seg(110.7, 129.0, 112.0, 129.0, "XLR_COLD", W_SIGNAL),
     ])
     vias.append(_gnd_via(88.0, 130.5))   # TX_S3C GND stitch
     vias.append(_gnd_via(112.0, 122.0))  # XLR1 GND stitch
@@ -923,8 +931,8 @@ def build_layout():
     # V_BOOST: R_D stub end (108.8,71) south to charge pump rail (108.8,117)
     # then west to C_LPF p1 (103.95,117) to close the ring
     segments.extend([
-        _seg(108.8, 71.0,  108.8, 117.0, "V_BOOST", W_HV),
-        _seg(108.8, 117.0, 103.95, 117.0, "V_BOOST", W_HV),
+        _seg(108.8, 71.0,  108.8, 116.0, "V_BOOST", W_HV),
+        _seg(108.8, 116.0, 103.95, 116.0, "V_BOOST", W_HV),
     ])
 
     # ── Task H: Charge pump ───────────────────────────────────────────────
@@ -939,16 +947,23 @@ def build_layout():
         _seg(89.95, 118.3, 90.05, 118.3,  "PHANTOM", W_HV),
         _seg(89.95, 120.0, 90.425, 120.0, "PHANTOM", W_HV),
         # V_BOOST: D1 p2 → C_PUMP p2 → C_RSVR p1 → L1 p1 → L1 p2 → C_LPF p1
-        _seg(91.95, 118.3, 91.95, 117.0,  "V_BOOST", W_HV),
-        _seg(91.95, 117.0, 93.95, 117.0,  "V_BOOST", W_HV),
+        # Route at Y=116 (not 117) to avoid passing through GND pads at Y=117
+        _seg(91.95, 118.3, 91.95, 116.0,  "V_BOOST", W_HV),
         _seg(91.575, 120.0, 91.95, 120.0, "V_BOOST", W_HV),
         _seg(91.95, 120.0, 91.95, 118.3,  "V_BOOST", W_HV),
-        _seg(93.95, 117.0, 98.9,  117.0,  "V_BOOST", W_HV),
-        _seg(101.1, 117.0, 103.95, 117.0, "V_BOOST", W_HV),
+        # stubs north to each component pad at Y=117
+        _seg(91.95, 116.0, 93.95, 116.0,  "V_BOOST", W_HV),  # trunk east
+        _seg(93.95, 117.0, 93.95, 116.0,  "V_BOOST", W_HV),  # C_RSVR p1 stub
+        _seg(93.95, 116.0, 98.9,  116.0,  "V_BOOST", W_HV),  # trunk to L1
+        _seg(98.9,  117.0, 98.9,  116.0,  "V_BOOST", W_HV),  # L1 p1 stub
+        _seg(98.9,  116.0, 101.1, 116.0,  "V_BOOST", W_HV),  # L1 bridge
+        _seg(101.1, 117.0, 101.1, 116.0,  "V_BOOST", W_HV),  # L1 p2 stub
+        _seg(101.1, 116.0, 103.95, 116.0, "V_BOOST", W_HV),  # trunk to C_LPF
+        _seg(103.95, 117.0, 103.95, 116.0,"V_BOOST", W_HV),  # C_LPF p1 stub
     ])
     vias.append(_gnd_via(91.0, 114.5))   # D1 p3 GND
-    vias.append(_gnd_via(96.05, 116.3))  # C_RSVR p2 GND
-    vias.append(_gnd_via(106.05, 116.3)) # C_LPF p2 GND
+    vias.append(_gnd_via(96.05, 118.0))  # C_RSVR p2 GND
+    vias.append(_gnd_via(106.05, 118.0)) # C_LPF p2 GND
 
     # ── Commit to board ──────────────────────────────────────────────────
     b.footprints.extend(components)
